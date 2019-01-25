@@ -1,0 +1,129 @@
+InTerminator = CR;
+OutTerminator = CR LF;
+
+setFlowrate {
+	out "%.3f flowrate set";
+}
+
+_setFlowrate {
+	out "%(\$1\$2).1f %(\$1\$2).3f flowrate set";
+}
+
+getFlowrate {
+	out "a_flow load p";
+	in "%f";
+}
+
+getPressure {
+	out "a_press1 load p";
+	in "%d";
+}
+
+setPressureMax {
+	out "%d pmax set";
+}
+
+_setPressureMax {
+	out "%(\$1\$2).1f %(\$1\$3)d pmax set";
+}
+
+getPressureMax {
+	out "a_pmax load p";
+	in "%d";
+}
+
+setPressureMin {
+	out "%d pmin set";
+}
+
+_setPressureMin {
+	out "%(\$1\$2).1f %(\$1\$3)d pmin set";
+}
+
+getPressureMin {
+	out "a_pmin load p";
+	in "%d";
+}
+
+setPumpOffTimer {
+	out "%(\$1).1f offtimer set";
+}
+
+setPumpOnTimer {
+	out "%.1f ontimer set";
+}
+
+setValvePosition {
+	out "%d valve set";
+}
+
+_setValvePosition {
+	out "%(\$1\$2).1f %(\$1\$3)d valve set";
+}
+
+getValvePosition {
+	out "valve load p";
+	in "%d";
+}
+
+setFileNumber {
+	out "%d fileno set";
+}
+
+setFileOpen {
+	out "%(\$1)d openfile";
+}
+
+readErrorString {
+    in "\%\%%[^%]\%\%";
+}
+
+setFileClose {
+	out "closefile";
+}
+
+setPump {
+	out "%d pump set";
+}
+
+getTime {
+	out "current_time load p";
+	in "%d";
+}
+
+getCompA {
+	out "compa load p";
+	in "%f";
+}
+
+getCompB {
+	out "compb load p";
+	in "%f";
+}
+
+getCompC {
+	out "compc load p";
+	in "%f";
+}
+
+getCompD {
+	out "compd load p";
+	in "%f";
+}
+
+setComp {
+	out "%(\$1\$2).1f %(\$1\$3).1f %(\$1\$4).1f comp set";
+}
+
+_setComp {
+	out "%(\$1\$2).1f %(\$1\$3).1f %(\$1\$4).1f %(\$1\$5).1f comp set";
+}
+
+getError {
+	out "trouble load p";
+	in "%d";
+}
+
+setError {
+	out "0 trouble set";
+}

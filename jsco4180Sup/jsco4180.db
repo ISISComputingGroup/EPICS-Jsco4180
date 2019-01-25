@@ -1,0 +1,1154 @@
+# Created by Aaron James Long - 2019- RAL (ISIS) - Experimental Controls Group
+#=============================================================================
+# JASCO HPLC PU-4180 Pump IOC
+# 
+# Dependencies
+#     jsco4180.proto
+#
+# RS-232C Specifications
+#     Baud rate: 4800 Baud
+#     Stop bits: 2 bit
+#        Parity: None
+#   Data length: 8 bit
+#  Flow control: Xon/Xoff control
+#
+# Notes:
+#     Communication command is terminated with CR.
+#     Communication return is terminated with CR and LF. 
+#
+
+#################################
+# 1. COMMON RECORDS
+#################################
+#
+record(bo, "$(P)SIM")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(ZNAM, "NO")
+    field(ONAM, "YES")
+    field(VAL, "$(RECSIM=0)")
+    field(PINI, "YES")
+}
+
+record(bo, "$(P)DISABLE")
+{
+    field(DESC, "Disable comms")
+    field(PINI, "YES")
+    field(VAL, "$(DISABLE=0)")
+    field(OMSL, "supervisory")
+    field(ZNAM, "COMMS ENABLED")
+    field(ONAM, "COMMS DISABLED")
+}
+
+#################################
+# 2. FLOWRATE
+#################################
+#
+# The flowrate of the device can be change at any point using the FLOWRATE:SP
+# command (even while the device is pumping). The _FLOWRATE:SP and it's associ
+# -ated _FLOWRATE:TIME:SP relate to ramped change in flowrate that are used 
+# only in a saved program. Refer to Sec.6 "File" for details.
+#
+#
+record(ai, "$(P)FLOWRATE") 
+{
+	field(DESC, "Current pump flowrate in mL/min")
+	field(DTYP, "stream")
+	field(SCAN, "1 second")
+	
+	field(INP, "@jsco4180.proto getFlowrate $(PORT)")
+	
+	field(PREC, "3")
+	field(EGU, "mL/min")
+	info(INTEREST, "HIGH")
+	info(archive, "VAL")
+	info(alarm, "JSCO4180")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:FLOWRATE")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(ao, "$(P)FLOWRATE:SP") 
+{
+	field(DESC, "Set the pumps flow rate in mL/min")
+	field(DTYP, "stream")
+	field(DRVH, "10.000")
+	field(DRVL, "0.000")
+	field(VAL, "0.010")
+	
+	field(OUT, "@jsco4180.proto setFlowrate $(PORT)")
+	
+	field(PREC, "3")
+	field(EGU, "mL/min")
+	info(INTEREST, "HIGH")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:FLOWRATE:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)FLOWRATE:SP", "$(P)FLOWRATE:SP:RBV")
+
+record(ao, "$(P)_FLOWRATE:SP") 
+{
+	field(DESC, "Ramp the pumps flow rate in mL/min")
+	field(DTYP, "stream")
+	field(DRVH, "10.000")
+	field(DRVL, "0.000")
+	
+	field(OUT, "@jsco4180.proto _setFlowrate($(P),FLOWRATE:TIME:SP,FLOWRATE:SP) $(PORT)")
+	
+	field(PREC, "3")
+	field(EGU, "mL/min")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:_FLOWRATE:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)_FLOWRATE:SP", "$(P)_FLOWRATE:SP:RBV")
+
+record(ao, "$(P)FLOWRATE:TIME:SP")
+{
+	field(DESC, "Desired ramp time in min")
+	field(DTYP, "Soft Channel")
+	field(DRVH, "999.9")
+	field(DRVL, "0.0")
+	
+	field(EGU, "min")
+}
+alias("$(P)FLOWRATE:TIME:SP", "$(P)FLOWRATE:TIME")
+
+#################################
+# 3. PRESSURE
+#################################
+#
+# The maximum and minimum pressures can be change at any point using the 
+# PRESSURE:MAX:SP/PRESSURE:MIN:SP commands (even while the device is pumping).
+# The _PRESSURE:MAX:SP/_PRESSURE:MIN:SP relate to a ramped change in pressure
+# limits that are used only in a saved program. Refer to Sec.6 "File" for 
+# details.
+#
+record(ai, "$(P)PRESSURE") 
+{
+	field(DESC, "Current pressure in kg/cm^2")
+	field(DTYP, "stream")
+	field(SCAN, "1 second")
+	
+	field(INP, "@jsco4180.proto getPressure $(PORT)")
+	
+	field(EGU, "kg/cm^2")
+	info(INTEREST, "HIGH")
+	info(archive, "VAL")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:PRESSURE")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(ai, "$(P)PRESSURE:MAX") 
+{
+	field(DESC, "Maximum pressure in kg/cm^2")
+	field(DTYP, "stream")
+	field(SCAN, "1 second")
+	
+	field(INP, "@jsco4180.proto getPressureMax $(PORT)")
+	
+	field(EGU, "kg/cm^2")
+	info(INTEREST, "HIGH")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:PRESSURE:MAX")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(ao, "$(P)PRESSURE:MAX:SP") 
+{
+	field(DESC, "Set the maximum pressure in kg/cm^2")
+	field(DTYP, "stream")
+	field(DRVH, "700")
+	field(DRVL, "0")
+	field(VAL, "400")
+	
+	field(OUT, "@jsco4180.proto setPressureMax $(PORT)")
+	
+	field(EGU, "kg/cm^2")
+	info(INTEREST, "HIGH")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:PRESSURE:MAX:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)PRESSURE:MAX", "$(P)PRESSURE:MAX:SP:RBV")
+
+record(ao, "$(P)_PRESSURE:MAX:SP") 
+{
+	field(DESC, "Ramp the maximum pressure in kg/cm^2")
+	field(DTYP, "stream")
+	field(DRVH, "700")
+	field(DRVL, "0")
+	
+	field(OUT, "@jsco4180.proto _setPressureMax($(P)PRESSURE:,MAX:TIME:SP,MAX:SP:RBV) $(PORT)")
+	
+	field(EGU, "kg/cm^2")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:_PRESSURE:MAX:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(ao, "$(P)PRESSURE:MAX:TIME:SP")
+{
+	field(DESC, "Desired ramp time in min")
+    field(DTYP, "Soft Channel")
+	field(DRVH, "999.9")
+	field(DRVL, "0.0")
+	
+	field(EGU, "min")
+}
+alias("$(P)PRESSURE:MAX:TIME:SP", "$(P)PRESSURE:MAX:TIME")
+
+record(ai, "$(P)PRESSURE:MIN") 
+{
+	field(DESC, "Minimum pressure in kg/cm^2")
+	field(DTYP, "stream")
+	field(SCAN, "1 second")
+	
+	field(INP, "@jsco4180.proto getPressureMin $(PORT)")
+	
+	field(EGU, "kg/cm^2")
+	info(INTEREST, "HIGH")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:PRESSURE:MIN")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(ao, "$(P)PRESSURE:MIN:SP") 
+{
+	field(DESC, "Set the minimum pressure in kg/cm^2")
+	field(DTYP, "stream")
+	field(DRVH, "700")
+	field(DRVL, "0")
+	field(VAL, "1")
+	
+	field(OUT, "@jsco4180.proto setPressureMin $(PORT)")
+	
+	field(EGU, "kg/cm^2")
+	info(INTEREST, "HIGH")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:PRESSURE:MIN:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)PRESSURE:MIN", "$(P)PRESSURE:MIN:SP:RBV")
+
+record(ao, "$(P)_PRESSURE:MIN:SP") 
+{
+	field(DESC, "Ramp the minimum pressure in kg/cm^2")
+	field(DTYP, "stream")
+	field(DRVH, "700")
+	field(DRVL, "0")
+	
+	field(OUT, "@jsco4180.proto _setPressureMin($(P)PRESSURE:,MIN:TIME:SP,MIN:SP:RBV) $(PORT)")
+	
+	field(EGU, "kg/cm^2")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:_PRESSURE:MIN:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(ao, "$(P)PRESSURE:MIN:TIME:SP")
+{
+	field(DESC, "Desired runtime in min")
+    field(DTYP, "Soft Channel")
+	field(DRVH, "999.9")
+	field(DRVL, "0.0")
+	
+	field(EGU, "min")
+	info(INTEREST, "HIGH")
+}
+alias("$(P)PRESSURE:MIN:TIME:SP", "$(P)PRESSURE:MIN:TIME")
+
+
+#################################
+# 4. PUMP ON/OFF TIMER
+#################################
+#
+# The device can automatically switch the pump on or off within a 99.9 hour
+# window. These are used with saved programs. For general control see Sec.7 
+# "Pump Control".
+#
+record(ao, "$(P)_PUMP:TIMER:ON:SP") 
+{
+	field(DESC, "Pump-on timer in hours")
+	field(DTYP, "stream")
+	field(DRVH, "99.9")
+	field(DRVL, "0.0")
+	
+	field(OUT, "@jsco4180.proto setPumpOnTimer $(PORT)")
+	
+	field(PREC, "1")
+	field(EGU, "hours")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:_PUMP:TIMER:ON:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)_PUMP:TIMER:ON:SP", "$(P)_PUMP:TIMER:ON")
+
+record(ao, "$(P)_PUMP:TIMER:OFF:SP") 
+{
+	field(DESC, "Pump-off timer in hours")
+	field(DTYP, "stream")
+	field(DRVH, "99.9")
+	field(DRVL, "0.0")
+	
+	field(OUT, "@jsco4180.proto setPumpOffTimer($(P)_PUMP:TIME:SP) $(PORT)")
+	
+	field(PREC, "1")
+	field(EGU, "hours")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:_PUMP:TIMER:OFF:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)_PUMP:TIMER:OFF:SP", "$(P)_PUMP:TIMER:OFF")
+
+record(ao, "$(P)_PUMP:TIME:SP")
+{
+	field(DESC, "Desired runtime in hours")
+    field(DTYP, "Soft Channel")
+	field(DRVH, "99.9")
+	field(DRVL, "0.0")
+	field(VAL, "60")
+	
+	field(PREC, "1")
+	field(EGU, "hours")
+}
+alias("$(P)_PUMP:TIME:SP", "$(P)_PUMP:TIME:SP:RBV")
+
+#################################
+# 5. VALVE POSITION
+#################################
+#
+# The valve position can be change at any point using the VALVE:POS:SP command
+# (even while the device is pumping). The _VALVE:POS:SP relate to a ramped 
+# change in valve position that are used only in a saved program. Refer to 
+# Sec.6 "File" for details.
+#
+record(ai, "$(P)VALVE:POS") 
+{
+	field(DESC, "Current valve position")
+	field(DTYP, "stream")
+	field(SCAN, "1 second")
+	field(VAL, "1")
+	
+	field(INP, "@jsco4180.proto getValvePosition $(PORT)")
+	
+	info(INTEREST, "HIGH")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:VALVE:POS")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(ao, "$(P)VALVE:POS:SP") 
+{
+	field(DESC, "Valve position set point")
+	field(DTYP, "stream")
+	field(DRVH, "10")
+	field(DRVL, "1")
+	field(VAL, "1")
+	
+	field(OUT, "@jsco4180.proto setValvePosition $(PORT)")
+	
+	info(INTEREST, "HIGH")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:VALVE:POS:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)VALVE:POS", "$(P)VALVE:POS:SP:RBV")
+
+record(ao, "$(P)_VALVE:POS:SP") 
+{
+	field(DESC, "Timed valve position set point")
+	field(DTYP, "stream")
+	field(DRVH, "10")
+	field(DRVL, "1")
+	
+	field(OUT, "@jsco4180.proto _setValvePosition($(P)VALVE:,TIME:SP,POS:SP) $(PORT)")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:_VALVE:POS:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(ao, "$(P)VALVE:TIME:SP")
+{
+	field(DESC, "Desired runtime in min")
+    field(DTYP, "Soft Channel")
+	field(DRVH, "999.9")
+	field(DRVL, "0.0")
+	
+	field(EGU, "min")
+}
+alias("$(P)VALVE:TIME:SP", "$(P)VALVE:TIME")
+
+#################################
+# 6. FILE
+#################################
+#
+# The device can have 10 files (programs) stored:  1-9 (0=10). The currently 
+# selected file will be used as the argument in the FILE:OPEN record when 
+# it's processed. 
+# 
+# You can create programs in the following way:
+#
+#         Select file
+#              |
+#              v
+#          Open File
+#              |
+#              v
+#     Input Timed Commands
+#              |
+#              v
+#         Close File
+#
+# Programs can then be run by selecting the file and using the START:SP.
+#
+# NB: Currently only support 7 files.
+record(mbbo, "$(P)FILE:NUM:SP") 
+{
+	field(DESC, "File number.")
+	field(DTYP, "stream")
+	field(VAL, "1")
+	
+	field(ZRVL, "0")
+	field(ZRST, "File 10")
+	
+	field(ONVL, "1")
+	field(ONST, "File 1")
+	
+	field(TWVL, "2")
+	field(TWST, "File 2")
+	
+	field(THVL, "3")
+	field(THST, "File 3")
+	
+	field(FRVL, "4")
+	field(FRST, "File 4")
+	
+	field(FVVL, "5")
+	field(FVST, "File 5")
+	
+	field(SXVL, "6")
+	field(SXST, "File 6")
+	
+	field(OUT, "@jsco4180.proto setFileNumber $(PORT)")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:FILE:NUM:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)FILE:NUM:SP", "$(P)FILE:NUM")
+
+record(bo, "$(P)FILE:OPEN:SP") 
+{
+	field(DESC, "Open selected file number")
+	field(DTYP, "stream")
+	field(ZNAM, "")
+	field(ONAM, "Open")
+	
+	field(OUT, "@jsco4180.proto setFileOpen($(P)FILE:NUM) $(PORT)")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:FILE:OPEN:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)FILE:OPEN:SP", "$(P)FILE:OPEN")
+
+record(bo, "$(P)FILE:CLOSE:SP") 
+{
+	field(DESC, "Close selected file number")
+	field(DTYP, "stream")
+	field(ZNAM, "")
+	field(ONAM, "Close")
+	
+	field(OUT, "@jsco4180.proto setFileClose $(PORT)")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:FILE:CLOSE:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)FILE:CLOSE:SP", "$(P)FILE:CLOSE")
+
+#################################
+# 7. PUMP CONTROL
+#################################
+#
+# The device has the ability to run files (programs) or continuously pump.
+# However, the gradients can only be updated from a file (program). To create
+# a simple general user interface the START:SP, TIMED:SP, and, STOP:SP records
+# are used to control the pump. The reason for this is that they are sseq reco
+# -rds that will generate a program to update the set points and execute it. 
+# 
+# The ability to create user programs and run them using _PUMP:SP is still av-
+# ailable.
+#
+record(mbbo, "$(P)_PUMP:SP") 
+{
+	field(DESC, "Pump control")
+	field(DTYP, "stream")
+	field(VAL, "1")
+
+	field(ZRVL, "0")
+	field(ZRST, "On")
+	
+	field(ONVL, "1")
+	field(ONST, "Off")
+	
+	field(TWVL, "2")
+	field(TWST, "Hold")
+	
+	field(THVL, "3")
+	field(THST, "Rerun")
+	
+	field(SXVL, "6")
+	field(SXST, "InitialRun")
+	
+	field(SVVL, "7")
+	field(SVST, "ProgramRun")
+	
+	field(EIVL, "8")
+	field(EIST, "ResetReRun")
+	
+	field(OUT, "@jsco4180.proto setPump $(PORT)")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:_PUMP:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)_PUMP:SP", "$(P)_PUMP")
+
+record(mbbo, "$(P)_PUMP:MODE")
+{
+	field(DESC, "Current pump mode")
+    field(DTYP, "Soft Channel")
+	field(VAL, "0")
+	
+	field(ZRVL, "0")
+	field(ZRST, "Stop")
+	
+	field(ONVL, "1")
+	field(ONST, "Start")
+	
+	field(TWVL, "2")
+	field(TWST, "Timed")
+}
+
+record(sseq, "$(P)START:SP")
+{
+	field(DESC, "Start the pump")
+	
+	field(LNK1, "$(P)_PUMP:SP CA")
+	field(DO1, "1")
+    field(WAIT1, "Wait")
+	
+	field(LNK2, "$(P)FILE:OPEN:SP PP")
+	field(DO2, "1")
+	
+	field(LNK3, "$(P)_COMP:SP PP")
+	field(DO3, "1")
+	
+	field(LNK4, "$(P)FILE:CLOSE:SP PP")
+	field(DO4, "1")
+	
+	field(LNK5, "$(P)_PUMP:SP CA")
+	field(DO5, "6")
+	field(WAIT5, "Wait")
+	
+	field(LNK6, "$(P)_PUMP:MODE PP")
+	field(DO6, "1")
+	
+	info(INTEREST, "HIGH")
+}
+
+record(sseq, "$(P)TIMED:SP")
+{
+    field(DESC, "Start timed pump for set time or volume")
+	
+	field(LNK1, "$(P)_PUMP:SP CA")
+    field(DO1, "1")
+	field(WAIT1, "Wait")
+	
+	field(LNK2, "$(P)FILE:OPEN:SP PP")
+	field(DO2, "1")
+	
+	field(LNK3, "$(P)_COMP:SP PP")
+	field(DO3, "1")
+	
+	field(LNK4, "$(P)FILE:CLOSE:SP PP")
+	field(DO4, "1")
+	
+	field(LNK5, "$(P)_PUMP:SP CA")
+	field(DO5, "8")
+	field(WAIT5, "Wait")
+	
+	field(LNK6, "$(P)_PUMP:MODE PP")
+	field(DO6, "2")
+	
+	info(INTEREST, "HIGH")
+}
+
+record(seq, "$(P)STOP:SP")
+{
+	field(DESC, "Stop pump")
+	
+	field(LNK1, "$(P)_PUMP:SP PP")
+	field(DO1, "1")
+	
+	field(LNK2, "$(P)_PUMP:MODE PP")
+	field(DO2, "0")
+	
+	info(INTEREST, "HIGH")
+}
+
+# Crude pump status check: Is there flow?
+record(calc, "$(P)STATUS") 
+{
+	field(DESC, "Pump status")
+	field(SCAN, "1 second")
+	field(INPA, "$(P)FLOWRATE CP MS")
+	
+	field(CALC, "A=0.0?0:1")
+	info(INTEREST, "HIGH")
+}
+
+#################################
+# 8. PROGRAM RUN-TIME
+#################################
+#
+# The device will return the current program runtime (TIME) which is used to
+# determine if the runtime for the users desired runtime (TIME:RUN:SP) 
+# duration or set volume (TIME:VOL:SP) has been reached.
+#
+# Changing a time or volume set points will automatically update the opposite
+# record as a helpful reference. i.e., I want to pump 10mL and set this and
+# the runtime set point will update based on the current flowrate to know how
+# long the run will take in advance. In the event the flowrate is changed,
+# the volume is kept constant and the runtime is updated.
+#
+record(ai, "$(P)TIME")
+{
+	field(DESC, "Elapsed program runtime")
+	field(DTYP, "stream")
+	field(SCAN, "1 second")
+	
+	field(INP, "@jsco4180.proto getTime $(PORT)")
+	
+	field(FLNK, "$(P)TIME:RUN:CHECK")
+	field(EGU, "s")
+	info(INTEREST, "HIGH")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:TIME")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(ao, "$(P)TIME:RUN:SP")
+{
+	field(DESC, "Pump runtime in seconds")
+    field(DTYP, "Soft Channel")
+	field(DRVL, "1")
+	field(DRVH, "1000000")
+	
+	field(EGU, "s")
+	field(FLNK, "$(P)TIME:RUN:CALCVOL")
+	info(INTEREST, "HIGH")
+}
+alias("$(P)TIME:RUN:SP", "$(P)TIME:RUN:SP:RBV")
+
+record(ao, "$(P)TIME:VOL:SP")
+{
+	field(DESC, "Pump set volume in mL")
+    field(DTYP, "Soft Channel")
+	field(DRVL, "0.001")
+	field(DRVL, "1000.000")
+	field(VAL, "0.010")
+	
+	field(EGU, "mL")
+	field(PREC, "3")
+	field(FLNK, "$(P)TIME:VOL:CALCRUN")
+	info(INTEREST, "HIGH")
+}
+alias("$(P)TIME:VOL:SP", "$(P)TIME:VOL:SP:RBV")
+
+record(calcout, "$(P)TIME:RUN:CHECK")
+{
+	field(DESC, "Stop pump if we have reached runtime")
+    field(DTYP, "Soft Channel")
+	field(INPA, "$(P)TIME")
+	field(INPB, "$(P)TIME:RUN:SP")
+	
+	field(CALC, "A>=B?1:0")
+	
+	field(OUT, "$(P)STOP:SP PP")
+	field(OOPT, "Transition To Non-zero")
+	field(FLNK, "$(P)TIME:REMAINING")
+}
+
+record(calc, "$(P)TIME:REMAINING")
+{
+	field(DESC, "Remaining pump time")
+	field(INPA, "$(P)TIME")
+	field(INPB, "$(P)TIME:RUN:SP")
+	field(INPC, "$(P)STATUS")
+	
+	field(CALC, "C=0?0:(B-A)")
+	field(EGU, "s")
+	field(FLNK, "$(P)VOL:REMAINING")
+	info(INTEREST, "HIGH")
+}
+
+record(calc, "$(P)VOL:REMAINING")
+{
+	field(DESC, "Remaining volume")
+	field(INPA, "$(P)TIME:REMAINING")
+	field(INPB, "$(P)FLOWRATE")
+	field(INPC, "$(P)TIME:VOL:SP")
+	field(INPD, "$(P)STATUS")
+	
+	field(CALC, "D=0?0:((A*B)/60)")
+	field(EGU, "mL")
+	field(PREC, "3")
+	info(INTEREST, "HIGH")
+}
+
+record(calcout, "$(P)TIME:VOL:CALCRUN")
+{
+	field(DESC, "Calculate runtime for volume")
+    field(DTYP, "Soft Channel")
+	field(INPA, "$(P)TIME:VOL:SP")
+	field(INPB, "$(P)FLOWRATE:SP CP")
+	
+	field(CALC, "(A/B)*60")
+	
+	field(OUT, "$(P)TIME:RUN:SP PP")
+}
+
+record(calcout, "$(P)TIME:RUN:CALCVOL")
+{
+	field(DESC, "Calculate vol (mL) for runtime")
+	field(INPA, "$(P)TIME:RUN:SP")
+	field(INPB, "$(P)FLOWRATE:SP CP")
+	
+	field(CALC, "(A*B)/60")
+	
+	field(OUT, "$(P)TIME:VOL:SP PP")
+}
+
+#################################
+# 9. COMPOSITION GRADIENTS
+#################################
+#
+# The compositions A, B, and, C can be change only during a program execution.
+# The _COMP:SPP relates to a ramped change in compositions that is used only 
+# in a saved program. Refer to Sec.6 "File" for details.
+#
+# NB: Component D is auto-calculated by the device.
+#
+record(ai, "$(P)COMP:A")
+{
+	field(DESC, "Composition A % device value")
+	field(DTYP, "stream")
+	field(SCAN, "1 second")
+	
+	field(INP, "@jsco4180.proto getCompA $(PORT)")
+	
+	info(INTEREST, "HIGH")
+	info(archive, "VAL")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:COMP:A")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(ao, "$(P)COMP:A:SP") 
+{
+	field(DESC, "Composition A % set point")
+    field(DTYP, "Soft Channel")
+	info(INTEREST, "HIGH")
+	field(DRVH, "100")
+	field(DRVL, "0")
+	field(VAL, "100")
+	
+	info(INTEREST, "HIGH")
+}
+alias("$(P)COMP:A:SP", "$(P)COMP:A:SP:RBV")
+
+record(ai, "$(P)COMP:B")
+{
+	field(DESC, "Composition B % device value")
+	field(DTYP, "stream")
+	field(SCAN, "1 second")
+	
+	field(INP, "@jsco4180.proto getCompB $(PORT)")
+	
+	info(INTEREST, "HIGH")
+	info(archive, "VAL")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:COMP:B")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(ao, "$(P)COMP:B:SP") 
+{
+	field(DESC, "Composition B % set point")
+    field(DTYP, "Soft Channel")
+	field(DRVH, "100")
+	field(DRVL, "0")
+	
+	info(INTEREST, "HIGH")
+}
+alias("$(P)COMP:B:SP", "$(P)COMP:B:SP:RBV")
+
+record(ai, "$(P)COMP:C")
+{
+	field(DESC, "Composition C % device value")
+	field(DTYP, "stream")
+	field(SCAN, "1 second")
+	
+	field(INP, "@jsco4180.proto getCompC $(PORT)")
+	
+	info(INTEREST, "HIGH")
+	info(archive, "VAL")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:COMP:C")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(ao, "$(P)COMP:C:SP") 
+{
+	field(DESC, "Composition C % set point")	
+    field(DTYP, "Soft Channel")
+	field(DRVH, "100")
+	field(DRVL, "0")
+	
+	info(INTEREST, "HIGH")
+}
+alias("$(P)COMP:C:SP", "$(P)COMP:C:SP:RBV")
+
+record(ai, "$(P)COMP:D")
+{
+	field(DESC, "Composition D % device value")
+	field(DTYP, "stream")
+	field(SCAN, "1 second")
+	
+	field(INP, "@jsco4180.proto getCompD $(PORT)")
+	
+	info(INTEREST, "HIGH")
+	info(archive, "VAL")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:COMP:D")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(bo, "$(P)COMP:SP") 
+{
+	field(DESC, "Set composition gradients")
+	field(DTYP, "stream")
+	field(ZNAM, "")
+	field(ONAM, "Set")
+	
+	field(OUT, "@jsco4180.proto setComp($(P),COMP:A:SP,COMP:B:SP,COMP:C:SP) $(PORT)")
+	
+	info(INTEREST, "HIGH")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:COMP:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)COMP:SP", "$(P)COMP")
+
+record(bo, "$(P)_COMP:SP") 
+{
+	field(DESC, "Ramp composition gradients")
+	field(DTYP, "stream")
+	field(ZNAM, "")
+	field(ONAM, "Set")
+	
+	field(OUT, "@jsco4180.proto _setComp($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP) $(PORT)")
+	
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:_COMP:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+alias("$(P)_COMP:SP", "$(P)_COMP")
+
+record(ao, "$(P)COMP:TIME:SP") 
+{
+	field(DESC, "Composition ramp time")
+    field(DTYP, "Soft Channel")
+	field(DRVH, "999.9")
+	field(DRVL, "0.0")
+	
+	field(EGU, "min")
+}
+alias("$(P)COMP:TIME:SP", "$(P)COMP:TIME")
+
+#################################
+# 10. ERROR INFORMATION
+#################################
+#
+# When the pump experiences a problem during operation, it will automatically
+# transmit an appropriate corresponding trouble message to the remote controller.
+#
+# The following records handle this:
+#
+#  ERROR:SP - If the device receives a trouble message, the controller must clear
+#             the trouble status.
+#
+#     ERROR - The device can automatically detect some problems and will transmit
+#             these to the controller.
+#
+# ERROR:STR - If a command is sent to the device that is erroneous the device will
+#             ignore the input and output a string with diagnostics information.
+#
+record(mbbi, "$(P)ERROR") 
+{
+	field(DESC, "Device auto-error information")
+	field(DTYP, "stream")
+	field(SCAN, "1 second")
+	
+	field(ZRVL, "0")
+	field(ZRST, "No error")
+	
+	field(ONVL, "1")
+	field(ONST, "Under press")
+	
+	field(TWVL, "2")
+	field(TWST, "Over press")
+	
+	field(FRVL, "4")
+	field(FRST, "Hardware error")
+	
+	field(EIVL, "8")
+	field(EIST, "Pump timer off")
+	
+	field(INP, "@jsco4180.proto getError $(PORT)")
+	
+	info(INTEREST, "HIGH")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:ERROR")
+    field(SDIS, "$(P)DISABLE")
+}
+
+record(bo, "$(P)ERROR:SP") 
+{
+	field(DESC, "Reset auto-error state")
+	field(DTYP, "stream")
+	field(ZNAM, "")
+	field(ONAM, "Reset")
+	
+	field(OUT, "@jsco4180.proto setError $(PORT)")
+	
+	info(INTEREST, "HIGH")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:ERROR:SP")
+    field(SDIS, "$(P)DISABLE")
+}
+
+alias("$(P)ERROR:SP", "$(P)ERROR:SP:RBV")
+
+record(stringin, "$(P)ERROR:STR")
+{
+	field(DESC, "Command input return error")
+	field(DTYP, "stream")
+	field(SCAN, "I/O Intr")
+	field(INP, "@jsco4180.proto readErrorString $(PORT)")
+
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:ERROR:STR")
+    field(SDIS, "$(P)DISABLE")
+}
+
+#################################
+# 11. SIMULATION RECORDS
+#################################
+#
+record(mbbo, "$(P)SIM:_PUMP")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:_PUMP","$(P)SIM:_PUMP:SP")
+
+record(ao, "$(P)SIM:_VALVE:POS:SP")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(ai, "$(P)SIM:TIME")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(ao, "$(P)SIM:_PRESSURE:MIN:SP")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(ai, "$(P)SIM:PRESSURE:MAX")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:PRESSURE:MAX","$(P)SIM:PRESSURE:MAX:SP")
+
+alias("$(P)SIM:PRESSURE:MAX","$(P)SIM:PRESSURE:MAX:SP:RBV")
+
+record(bo, "$(P)SIM:FILE:OPEN")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:FILE:OPEN","$(P)SIM:FILE:OPEN:SP")
+
+record(ao, "$(P)SIM:_FLOWRATE:SP")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:_FLOWRATE:SP","$(P)SIM:_FLOWRATE:SP:RBV")
+
+record(ao, "$(P)SIM:_PUMP:TIMER:OFF")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:_PUMP:TIMER:OFF","$(P)SIM:_PUMP:TIMER:OFF:SP")
+
+record(ai, "$(P)SIM:PRESSURE")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(bo, "$(P)SIM:COMP")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:COMP","$(P)SIM:COMP:SP")
+
+record(ai, "$(P)SIM:COMP:A")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:COMP:A","$(P)SIM:COMP:A:SP")
+
+alias("$(P)SIM:COMP:A","$(P)SIM:COMP:A:SP:RBV")
+
+record(ai, "$(P)SIM:COMP:B")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:COMP:B","$(P)SIM:COMP:B:SP")
+
+alias("$(P)SIM:COMP:B","$(P)SIM:COMP:B:SP:RBV")
+
+record(bo, "$(P)SIM:FILE:CLOSE")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:FILE:CLOSE","$(P)SIM:FILE:CLOSE:SP")
+
+record(ai, "$(P)SIM:COMP:D")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(ao, "$(P)SIM:_PUMP:TIMER:ON")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:_PUMP:TIMER:ON","$(P)SIM:_PUMP:TIMER:ON:SP")
+
+record(ai, "$(P)SIM:VALVE:POS")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:VALVE:POS","$(P)SIM:VALVE:POS:SP")
+
+alias("$(P)SIM:VALVE:POS","$(P)SIM:VALVE:POS:SP:RBV")
+
+record(mbbi, "$(P)SIM:ERROR")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:ERROR","$(P)SIM:ERROR:SP")
+
+alias("$(P)SIM:ERROR","$(P)SIM:ERROR:SP:RBV")
+
+record(bo, "$(P)SIM:_COMP")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:_COMP","$(P)SIM:_COMP:SP")
+
+record(ai, "$(P)SIM:FLOWRATE")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:FLOWRATE","$(P)SIM:FLOWRATE:SP")
+
+alias("$(P)SIM:FLOWRATE","$(P)SIM:FLOWRATE:SP:RBV")
+
+record(ao, "$(P)SIM:_PRESSURE:MAX:SP")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(mbbo, "$(P)SIM:FILE:NUM")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:FILE:NUM","$(P)SIM:FILE:NUM:SP")
+
+record(ai, "$(P)SIM:COMP:C")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:COMP:C","$(P)SIM:COMP:C:SP")
+
+alias("$(P)SIM:COMP:C","$(P)SIM:COMP:C:SP:RBV")
+
+record(stringin, "$(P)SIM:ERROR:STR")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(ai, "$(P)SIM:PRESSURE:MIN")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+alias("$(P)SIM:PRESSURE:MIN","$(P)SIM:PRESSURE:MIN:SP")
+
+alias("$(P)SIM:PRESSURE:MIN","$(P)SIM:PRESSURE:MIN:SP:RBV")
+
