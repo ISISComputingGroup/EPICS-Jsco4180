@@ -272,7 +272,7 @@ alias("$(P)PRESSURE:MIN:TIME:SP", "$(P)PRESSURE:MIN:TIME")
 #
 record(ao, "$(P)_PUMP:TIMER:ON:SP") 
 {
-	field(DESC, "Pump-on timer in hours")
+	field(DESC, "Pump-on timer in hour")
 	field(DTYP, "stream")
 	field(DRVH, "99.9")
 	field(DRVL, "0.0")
@@ -280,7 +280,7 @@ record(ao, "$(P)_PUMP:TIMER:ON:SP")
 	field(OUT, "@jsco4180.proto setPumpOnTimer $(PORT)")
 	
 	field(PREC, "1")
-	field(EGU, "hours")
+	field(EGU, "hour")
     field(SIML, "$(P)SIM")
     field(SIOL, "$(P)SIM:_PUMP:TIMER:ON:SP")
     field(SDIS, "$(P)DISABLE")
@@ -297,7 +297,7 @@ record(ao, "$(P)_PUMP:TIMER:OFF:SP")
 	field(OUT, "@jsco4180.proto setPumpOffTimer($(P)_PUMP:TIME:SP) $(PORT)")
 	
 	field(PREC, "1")
-	field(EGU, "hours")
+	field(EGU, "hour")
     field(SIML, "$(P)SIM")
     field(SIOL, "$(P)SIM:_PUMP:TIMER:OFF:SP")
     field(SDIS, "$(P)DISABLE")
@@ -313,7 +313,7 @@ record(ao, "$(P)_PUMP:TIME:SP")
 	field(VAL, "60")
 	
 	field(PREC, "1")
-	field(EGU, "hours")
+	field(EGU, "hour")
 }
 alias("$(P)_PUMP:TIME:SP", "$(P)_PUMP:TIME:SP:RBV")
 
@@ -607,6 +607,7 @@ record(calc, "$(P)STATUS")
 	
 	field(CALC, "A=0.0?0:1")
 	info(INTEREST, "HIGH")
+	field(ASG, "READONLY")
 }
 
 #################################
@@ -657,7 +658,7 @@ record(ao, "$(P)TIME:VOL:SP")
 	field(DESC, "Pump set volume in mL")
     field(DTYP, "Soft Channel")
 	field(DRVL, "0.001")
-	field(DRVL, "1000.000")
+	field(DRVH, "1000.000")
 	field(VAL, "0.010")
 	
 	field(EGU, "mL")
@@ -679,6 +680,7 @@ record(calcout, "$(P)TIME:RUN:CHECK")
 	field(OUT, "$(P)STOP:SP PP")
 	field(OOPT, "Transition To Non-zero")
 	field(FLNK, "$(P)TIME:REMAINING")
+	field(ASG, "READONLY")
 }
 
 record(calc, "$(P)TIME:REMAINING")
@@ -692,6 +694,7 @@ record(calc, "$(P)TIME:REMAINING")
 	field(EGU, "s")
 	field(FLNK, "$(P)VOL:REMAINING")
 	info(INTEREST, "HIGH")
+	field(ASG, "READONLY")
 }
 
 record(calc, "$(P)VOL:REMAINING")
@@ -706,6 +709,7 @@ record(calc, "$(P)VOL:REMAINING")
 	field(EGU, "mL")
 	field(PREC, "3")
 	info(INTEREST, "HIGH")
+	field(ASG, "READONLY")
 }
 
 record(calcout, "$(P)TIME:VOL:CALCRUN")
@@ -718,6 +722,7 @@ record(calcout, "$(P)TIME:VOL:CALCRUN")
 	field(CALC, "(A/B)*60")
 	
 	field(OUT, "$(P)TIME:RUN:SP PP")
+	field(ASG, "READONLY")
 }
 
 record(calcout, "$(P)TIME:RUN:CALCVOL")
@@ -729,6 +734,7 @@ record(calcout, "$(P)TIME:RUN:CALCVOL")
 	field(CALC, "(A*B)/60")
 	
 	field(OUT, "$(P)TIME:VOL:SP PP")
+	field(ASG, "READONLY")
 }
 
 #################################
@@ -749,6 +755,7 @@ record(ai, "$(P)COMP:A")
 	
 	field(INP, "@jsco4180.proto getCompA $(PORT)")
 	
+	field(EGU, "%")
 	info(INTEREST, "HIGH")
 	info(archive, "VAL")
     field(SIML, "$(P)SIM")
@@ -765,6 +772,7 @@ record(ao, "$(P)COMP:A:SP")
 	field(DRVL, "0")
 	field(VAL, "100")
 	
+	field(EGU, "%")
 	info(INTEREST, "HIGH")
 }
 alias("$(P)COMP:A:SP", "$(P)COMP:A:SP:RBV")
@@ -777,6 +785,7 @@ record(ai, "$(P)COMP:B")
 	
 	field(INP, "@jsco4180.proto getCompB $(PORT)")
 	
+	field(EGU, "%")
 	info(INTEREST, "HIGH")
 	info(archive, "VAL")
     field(SIML, "$(P)SIM")
@@ -790,7 +799,8 @@ record(ao, "$(P)COMP:B:SP")
     field(DTYP, "Soft Channel")
 	field(DRVH, "100")
 	field(DRVL, "0")
-	
+
+	field(EGU, "%")
 	info(INTEREST, "HIGH")
 }
 alias("$(P)COMP:B:SP", "$(P)COMP:B:SP:RBV")
@@ -802,7 +812,8 @@ record(ai, "$(P)COMP:C")
 	field(SCAN, "1 second")
 	
 	field(INP, "@jsco4180.proto getCompC $(PORT)")
-	
+
+	field(EGU, "%")
 	info(INTEREST, "HIGH")
 	info(archive, "VAL")
     field(SIML, "$(P)SIM")
@@ -816,7 +827,8 @@ record(ao, "$(P)COMP:C:SP")
     field(DTYP, "Soft Channel")
 	field(DRVH, "100")
 	field(DRVL, "0")
-	
+
+	field(EGU, "%")
 	info(INTEREST, "HIGH")
 }
 alias("$(P)COMP:C:SP", "$(P)COMP:C:SP:RBV")
@@ -829,6 +841,7 @@ record(ai, "$(P)COMP:D")
 	
 	field(INP, "@jsco4180.proto getCompD $(PORT)")
 	
+	field(EGU, "%")
 	info(INTEREST, "HIGH")
 	info(archive, "VAL")
     field(SIML, "$(P)SIM")
