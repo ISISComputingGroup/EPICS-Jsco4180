@@ -1115,15 +1115,13 @@ record(bo, "$(P)SIM:_COMP")
 
 alias("$(P)SIM:_COMP","$(P)SIM:_COMP:SP")
 
-record(ai, "$(P)SIM:FLOWRATE")
+record(ai, "$(P)SIM:FLOWRATE:SP")
 {
     field(SCAN, "Passive")
     field(DTYP, "Soft Channel")
 }
 
-alias("$(P)SIM:FLOWRATE","$(P)SIM:FLOWRATE:SP")
-
-alias("$(P)SIM:FLOWRATE","$(P)SIM:FLOWRATE:SP:RBV")
+alias("$(P)SIM:FLOWRATE:SP","$(P)SIM:FLOWRATE:SP:RBV")
 
 record(ao, "$(P)SIM:_PRESSURE:MAX:SP")
 {
@@ -1164,4 +1162,3 @@ record(ai, "$(P)SIM:PRESSURE:MIN")
 alias("$(P)SIM:PRESSURE:MIN","$(P)SIM:PRESSURE:MIN:SP")
 
 alias("$(P)SIM:PRESSURE:MIN","$(P)SIM:PRESSURE:MIN:SP:RBV")
-
