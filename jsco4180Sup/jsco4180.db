@@ -741,7 +741,7 @@ record(calcout, "$(P)TIME:RUN:CALCVOL")
 # 9. COMPOSITION GRADIENTS
 #################################
 #
-# The compositions A, B, and, C can be change only during a program execution.
+# The components A, B, and, C can be change only during a program execution.
 # The _COMP:SPP relates to a ramped change in compositions that is used only 
 # in a saved program. Refer to Sec.6 "File" for details.
 #
@@ -749,7 +749,7 @@ record(calcout, "$(P)TIME:RUN:CALCVOL")
 #
 record(ai, "$(P)COMP:A")
 {
-	field(DESC, "Composition A % device value")
+	field(DESC, "Component A % device value")
 	field(DTYP, "stream")
 	field(SCAN, "1 second")
 	
@@ -765,7 +765,7 @@ record(ai, "$(P)COMP:A")
 
 record(ao, "$(P)COMP:A:SP") 
 {
-	field(DESC, "Composition A % set point")
+	field(DESC, "Component A % set point")
     field(DTYP, "Soft Channel")
 	info(INTEREST, "HIGH")
 	field(DRVH, "100")
@@ -779,7 +779,7 @@ alias("$(P)COMP:A:SP", "$(P)COMP:A:SP:RBV")
 
 record(ai, "$(P)COMP:B")
 {
-	field(DESC, "Composition B % device value")
+	field(DESC, "Component B % device value")
 	field(DTYP, "stream")
 	field(SCAN, "1 second")
 	
@@ -795,7 +795,7 @@ record(ai, "$(P)COMP:B")
 
 record(ao, "$(P)COMP:B:SP") 
 {
-	field(DESC, "Composition B % set point")
+	field(DESC, "Component B % set point")
     field(DTYP, "Soft Channel")
 	field(DRVH, "100")
 	field(DRVL, "0")
@@ -807,7 +807,7 @@ alias("$(P)COMP:B:SP", "$(P)COMP:B:SP:RBV")
 
 record(ai, "$(P)COMP:C")
 {
-	field(DESC, "Composition C % device value")
+	field(DESC, "Component C % device value")
 	field(DTYP, "stream")
 	field(SCAN, "1 second")
 	
@@ -823,7 +823,7 @@ record(ai, "$(P)COMP:C")
 
 record(ao, "$(P)COMP:C:SP") 
 {
-	field(DESC, "Composition C % set point")	
+	field(DESC, "Component C % set point")	
     field(DTYP, "Soft Channel")
 	field(DRVH, "100")
 	field(DRVL, "0")
@@ -835,7 +835,7 @@ alias("$(P)COMP:C:SP", "$(P)COMP:C:SP:RBV")
 
 record(ai, "$(P)COMP:D")
 {
-	field(DESC, "Composition D % device value")
+	field(DESC, "Component D % device value")
 	field(DTYP, "stream")
 	field(SCAN, "1 second")
 	
@@ -851,7 +851,7 @@ record(ai, "$(P)COMP:D")
 
 record(bo, "$(P)COMP:SP") 
 {
-	field(DESC, "Set composition gradients")
+	field(DESC, "Set composition components")
 	field(DTYP, "stream")
 	field(ZNAM, "")
 	field(ONAM, "Set")
@@ -867,7 +867,7 @@ alias("$(P)COMP:SP", "$(P)COMP")
 
 record(bo, "$(P)_COMP:SP") 
 {
-	field(DESC, "Ramp composition gradients")
+	field(DESC, "Ramp composition component")
 	field(DTYP, "stream")
 	field(ZNAM, "")
 	field(ONAM, "Set")
