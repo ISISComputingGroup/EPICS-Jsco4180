@@ -849,22 +849,6 @@ record(ai, "$(P)COMP:D")
     field(SDIS, "$(P)DISABLE")
 }
 
-record(bo, "$(P)COMP:SP") 
-{
-	field(DESC, "Set composition components")
-	field(DTYP, "stream")
-	field(ZNAM, "")
-	field(ONAM, "Set")
-	
-	field(OUT, "@jsco4180.proto setComp($(P),COMP:A:SP,COMP:B:SP,COMP:C:SP) $(PORT)")
-	
-	info(INTEREST, "HIGH")
-    field(SIML, "$(P)SIM")
-    field(SIOL, "$(P)SIM:COMP:SP")
-    field(SDIS, "$(P)DISABLE")
-}
-alias("$(P)COMP:SP", "$(P)COMP")
-
 record(bo, "$(P)_COMP:SP") 
 {
 	field(DESC, "Ramp composition component")
@@ -1036,14 +1020,6 @@ record(ai, "$(P)SIM:PRESSURE")
     field(SCAN, "Passive")
     field(DTYP, "Soft Channel")
 }
-
-record(bo, "$(P)SIM:COMP")
-{
-    field(SCAN, "Passive")
-    field(DTYP, "Soft Channel")
-}
-
-alias("$(P)SIM:COMP","$(P)SIM:COMP:SP")
 
 record(ai, "$(P)SIM:COMP:A")
 {
