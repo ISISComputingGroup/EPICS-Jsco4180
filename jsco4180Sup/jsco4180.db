@@ -339,6 +339,7 @@ record(ai, "$(P)VALVE:POS")
     field(SIML, "$(P)SIM")
     field(SIOL, "$(P)SIM:VALVE:POS")
     field(SDIS, "$(P)DISABLE")
+    field(EGU, "")
 }
 
 record(ao, "$(P)VALVE:POS:SP") 
@@ -348,6 +349,7 @@ record(ao, "$(P)VALVE:POS:SP")
 	field(DRVH, "10")
 	field(DRVL, "1")
 	field(VAL, "1")
+    field(EGU, "")
 	
 	field(OUT, "@jsco4180.proto setValvePosition $(PORT)")
 	
