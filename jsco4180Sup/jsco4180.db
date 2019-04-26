@@ -481,7 +481,7 @@ alias("$(P)FILE:CLOSE:SP", "$(P)FILE:CLOSE")
 # -rds that will generate a program to update the set points and execute it. 
 # 
 # The ability to create user programs and run them using _PUMP:SP is still av-
-# ailable.
+# available.
 #
 record(mbbo, "$(P)_PUMP:SP") 
 {
@@ -517,22 +517,6 @@ record(mbbo, "$(P)_PUMP:SP")
 }
 alias("$(P)_PUMP:SP", "$(P)_PUMP")
 
-record(mbbo, "$(P)_PUMP:MODE")
-{
-    field(DESC, "Current pump mode")
-    field(DTYP, "Soft Channel")
-    field(VAL, "0")
-    
-    field(ZRVL, "0")
-    field(ZRST, "Stop")
-    
-    field(ONVL, "1")
-    field(ONST, "Start")
-    
-    field(TWVL, "2")
-    field(TWST, "Timed")
-}
-
 record(sseq, "$(P)START:SP")
 {
     field(DESC, "Start the pump")
@@ -554,7 +538,7 @@ record(sseq, "$(P)START:SP")
     field(DO5, "6")
     field(WAIT5, "Wait")
     
-    field(LNK6, "$(P)_PUMP:MODE PP")
+    field(LNK6, "$(P)TIME:STATUS PP")
     field(DO6, "1")
     
     info(INTEREST, "HIGH")
@@ -581,7 +565,7 @@ record(sseq, "$(P)TIMED:SP")
     field(DO5, "8")
     field(WAIT5, "Wait")
     
-    field(LNK6, "$(P)_PUMP:MODE PP")
+    field(LNK6, "$(P)TIME:STATUS PP")
     field(DO6, "2")
     
     info(INTEREST, "HIGH")
@@ -594,7 +578,7 @@ record(seq, "$(P)STOP:SP")
     field(LNK1, "$(P)_PUMP:SP PP")
     field(DO1, "1")
     
-    field(LNK2, "$(P)_PUMP:MODE PP")
+    field(LNK2, "$(P)TIME:STATUS PP")
     field(DO2, "0")
     
     info(INTEREST, "HIGH")
@@ -642,6 +626,21 @@ record(ai, "$(P)TIME")
     field(SDIS, "$(P)DISABLE")
 }
 
+record(mbbi, "$(P)TIME:STATUS") 
+{
+    field(DESC, "Mode of time checking")
+    
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+  
+    field(ZRST, "STOP")
+    field(ONST, "START")
+    field(TWST, "TIMED")
+    
+    info(INTEREST, "HIGH")
+}
+
 record(ao, "$(P)TIME:RUN:SP")
 {
     field(DESC, "Pump runtime in seconds")
@@ -676,8 +675,9 @@ record(calcout, "$(P)TIME:RUN:CHECK")
     field(DTYP, "Soft Channel")
     field(INPA, "$(P)TIME")
     field(INPB, "$(P)TIME:RUN:SP")
+    field(INPC, "$(P)TIME:STATUS")
     
-    field(CALC, "A>=B?1:0")
+    field(CALC, "(A>=B)&&(C=2)?1:0")
     
     field(OUT, "$(P)STOP:SP PP")
     field(OOPT, "Transition To Non-zero")
