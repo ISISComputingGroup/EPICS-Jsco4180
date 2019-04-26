@@ -538,7 +538,7 @@ record(sseq, "$(P)START:SP")
     field(DO5, "6")
     field(WAIT5, "Wait")
     
-    field(LNK6, "$(P)TIME:STATUS PP")
+    field(LNK6, "$(P)TIME:MODE PP")
     field(DO6, "1")
     
     info(INTEREST, "HIGH")
@@ -565,7 +565,7 @@ record(sseq, "$(P)TIMED:SP")
     field(DO5, "8")
     field(WAIT5, "Wait")
     
-    field(LNK6, "$(P)TIME:STATUS PP")
+    field(LNK6, "$(P)TIME:MODE PP")
     field(DO6, "2")
     
     info(INTEREST, "HIGH")
@@ -578,11 +578,26 @@ record(seq, "$(P)STOP:SP")
     field(LNK1, "$(P)_PUMP:SP PP")
     field(DO1, "1")
     
-    field(LNK2, "$(P)TIME:STATUS PP")
+    field(LNK2, "$(P)TIME:MODE PP")
     field(DO2, "0")
     
     info(INTEREST, "HIGH")
 }
+
+record(sseq, "$(P)RESET:SP")
+{
+    field(DESC, "Reset pump to initial conditions")
+    
+    field(LNK1, "$(P)_PUMP:SP CA")
+    field(DO1, "8")
+    field(WAIT1, "Wait")
+    
+    field(LNK2, "$(P)_PUMP:SP PP")
+    field(DO2, "1")
+    
+    info(INTEREST, "HIGH")
+}
+alias("$(P)RESET:SP", "$(P)RESET")
 
 # Crude pump status check: Is there flow?
 record(calc, "$(P)STATUS:CHECK") 
@@ -592,7 +607,6 @@ record(calc, "$(P)STATUS:CHECK")
     field(INPA, "$(P)FLOWRATE CP MS")
     
     field(CALC, "A=0.0?0:1")
-    info(INTEREST, "HIGH")
     field(ASG, "READONLY")
 }
 
@@ -636,7 +650,7 @@ record(ai, "$(P)TIME")
     field(SDIS, "$(P)DISABLE")
 }
 
-record(mbbi, "$(P)TIME:STATUS") 
+record(mbbi, "$(P)TIME:MODE") 
 {
     field(DESC, "Mode of time checking")
     
@@ -644,8 +658,8 @@ record(mbbi, "$(P)TIME:STATUS")
     field(ONVL, "1")
     field(TWVL, "2")
   
-    field(ZRST, "STOP")
-    field(ONST, "START")
+    field(ZRST, "STOPPED")
+    field(ONST, "CONTINUOUS")
     field(TWST, "TIMED")
     
     info(INTEREST, "HIGH")
@@ -685,7 +699,7 @@ record(calcout, "$(P)TIME:RUN:CHECK")
     field(DTYP, "Soft Channel")
     field(INPA, "$(P)TIME")
     field(INPB, "$(P)TIME:RUN:SP")
-    field(INPC, "$(P)TIME:STATUS")
+    field(INPC, "$(P)TIME:MODE")
     
     field(CALC, "(A>=B)&&(C=2)?1:0")
     
