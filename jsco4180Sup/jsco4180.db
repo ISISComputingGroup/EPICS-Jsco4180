@@ -585,7 +585,7 @@ record(seq, "$(P)STOP:SP")
 }
 
 # Crude pump status check: Is there flow?
-record(calc, "$(P)STATUS") 
+record(calc, "$(P)STATUS:CHECK") 
 {
     field(DESC, "Pump status")
     field(SCAN, "1 second")
@@ -594,6 +594,16 @@ record(calc, "$(P)STATUS")
     field(CALC, "A=0.0?0:1")
     info(INTEREST, "HIGH")
     field(ASG, "READONLY")
+}
+
+record(bi, "$(P)STATUS")
+{
+    field(DESC, "Pump status")
+    field(INP, "$(P)STATUS:CHECK CP MS")
+    
+    field(ZNAM, "STOPPED")
+    field(ONAM, "RUNNING")
+    info(INTEREST, "HIGH")
 }
 
 #################################
