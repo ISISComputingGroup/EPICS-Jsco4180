@@ -480,7 +480,7 @@ alias("$(P)FILE:CLOSE:SP", "$(P)FILE:CLOSE")
 # are used to control the pump. The reason for this is that they are sseq reco
 # -rds that will generate a program to update the set points and execute it. 
 # 
-# The ability to create user programs and run them using _PUMP:SP is still av-
+# The ability to create user programs and run them using _PUMP:SP is still 
 # available.
 #
 record(mbbo, "$(P)_PUMP:SP") 
