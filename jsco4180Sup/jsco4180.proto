@@ -1,11 +1,10 @@
 InTerminator = CR;
 OutTerminator = CR LF;
 
-trouble_states = "{1=TROUBLE OVER PRESS|2=TROUBLE UNDER PRESS|4=TROUBLE EXT STOP|8=PUMP STOP TIMER OFF|0=?}";
+trouble_states = "{TROUBLE OVER PRESS=1|TROUBLE UNDER PRESS=2|TROUBLE EXT STOP=4|PUMP STOP TIMER OFF=8|=0}";
 
 mismatch_catcher {
     in "\%\%[" "%*#" $trouble_states "]\%\%";
-    out "0 trouble set"; # auto-acknowledge trouble states
 }
 
 setFlowrate {
