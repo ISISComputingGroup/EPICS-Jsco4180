@@ -1,129 +1,165 @@
 InTerminator = CR;
 OutTerminator = CR LF;
 
+trouble_states = "{1=TROUBLE OVER PRESS|2=TROUBLE UNDER PRESS|4=TROUBLE EXT STOP|8=PUMP STOP TIMER OFF|0=?}";
+
+mismatch_catcher {
+    in "\%\%[" "%*#" $trouble_states "]\%\%";
+    out "0 trouble set";
+}
+
 setFlowrate {
     out "%.3f flowrate set";
+    @mismatch { mismatch_catcher; }
 }
 
 _setFlowrate {
     out "%(\$1\$2).1f %(\$1\$2).3f flowrate set";
+    @mismatch { mismatch_catcher; }
 }
 
 getFlowrate {
     out "a_flow load p";
     in "%f";
+    @mismatch { mismatch_catcher; }
 }
 
 getPressure {
     out "a_press1 load p";
     in "%d";
+    @mismatch { mismatch_catcher; }
 }
 
 setPressureMax {
     out "%d pmax set";
+    @mismatch { mismatch_catcher; }
 }
 
 _setPressureMax {
     out "%(\$1\$2).1f %(\$1\$3)d pmax set";
+    @mismatch { mismatch_catcher; }
 }
 
 getPressureMax {
     out "a_pmax load p";
     in "%d";
+    @mismatch { mismatch_catcher; }
 }
 
 setPressureMin {
     out "%d pmin set";
+    @mismatch { mismatch_catcher; }
 }
 
 _setPressureMin {
     out "%(\$1\$2).1f %(\$1\$3)d pmin set";
+    @mismatch { mismatch_catcher; }
 }
 
 getPressureMin {
     out "a_pmin load p";
     in "%d";
+    @mismatch { mismatch_catcher; }
 }
 
 setPumpOffTimer {
     out "%(\$1).1f offtimer set";
+    @mismatch { mismatch_catcher; }
 }
 
 setPumpOnTimer {
     out "%.1f ontimer set";
+    @mismatch { mismatch_catcher; }
 }
 
 setValvePosition {
     out "%d valve set";
+    @mismatch { mismatch_catcher; }
 }
 
 _setValvePosition {
     out "%(\$1\$2).1f %(\$1\$3)d valve set";
+    @mismatch { mismatch_catcher; }
 }
 
 getValvePosition {
     out "valve load p";
     in "%d";
+    @mismatch { mismatch_catcher; }
 }
 
 setFileNumber {
     out "%d fileno set";
+    @mismatch { mismatch_catcher; }
 }
 
 setFileOpen {
     out "%(\$1)d openfile";
+    @mismatch { mismatch_catcher; }
 }
 
 readErrorString {
     in "\%\%%[^%]\%\%";
+    @mismatch { mismatch_catcher; }
 }
 
 setFileClose {
     out "closefile";
+    @mismatch { mismatch_catcher; }
 }
 
 setPump {
     out "%d pump set";
+    @mismatch { mismatch_catcher; }
 }
 
 getTime {
     out "current_time load p";
     in "%d";
+    @mismatch { mismatch_catcher; }
 }
 
 getCompA {
     out "compa load p";
     in "%f";
+    @mismatch { mismatch_catcher; }
 }
 
 getCompB {
     out "compb load p";
     in "%f";
+    @mismatch { mismatch_catcher; }
 }
 
 getCompC {
     out "compc load p";
     in "%f";
+    @mismatch { mismatch_catcher; }
 }
 
 getCompD {
     out "compd load p";
     in "%f";
+    @mismatch { mismatch_catcher; }
 }
 
 setComp {
     out "%(\$1\$2).1f %(\$1\$3).1f %(\$1\$4).1f comp set";
+    @mismatch { mismatch_catcher; }
 }
 
 _setComp {
     out "%(\$1\$2).1f %(\$1\$3).1f %(\$1\$4).1f %(\$1\$5).1f comp set";
+    @mismatch { mismatch_catcher; }
 }
 
 getError {
     out "trouble load p";
     in "%d";
+    @mismatch { mismatch_catcher; }
 }
 
 setError {
     out "0 trouble set";
+    @mismatch { mismatch_catcher; }
 }
