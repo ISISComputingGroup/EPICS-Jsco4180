@@ -525,14 +525,17 @@ record(sseq, "$(P)START:SP")
     field(DO1, "1")
     field(WAIT1, "Wait")
     
-    field(LNK2, "$(P)FILE:OPEN:SP PP")
+    field(LNK2, "$(P)FILE:OPEN:SP CA")
     field(DO2, "1")
+    field(WAIT2, "Wait")
     
-    field(LNK3, "$(P)_COMP:SP PP")
+    field(LNK3, "$(P)_COMP:SP CA")
     field(DO3, "1")
+    field(WAIT3, "Wait")
     
-    field(LNK4, "$(P)FILE:CLOSE:SP PP")
+    field(LNK4, "$(P)FILE:CLOSE:SP CA")
     field(DO4, "1")
+    field(WAIT4, "Wait")
     
     field(LNK5, "$(P)_PUMP:SP CA")
     field(DO5, "6")
@@ -552,14 +555,17 @@ record(sseq, "$(P)TIMED:SP")
     field(DO1, "1")
     field(WAIT1, "Wait")
     
-    field(LNK2, "$(P)FILE:OPEN:SP PP")
+    field(LNK2, "$(P)FILE:OPEN:SP CA")
     field(DO2, "1")
+    field(WAIT2, "Wait")
     
-    field(LNK3, "$(P)_COMP:SP PP")
+    field(LNK3, "$(P)_COMP:SP CA")
     field(DO3, "1")
+    field(WAIT3, "Wait")
     
-    field(LNK4, "$(P)FILE:CLOSE:SP PP")
+    field(LNK4, "$(P)FILE:CLOSE:SP CA")
     field(DO4, "1")
+    field(WAIT4, "Wait")
     
     field(LNK5, "$(P)_PUMP:SP CA")
     field(DO5, "8")
