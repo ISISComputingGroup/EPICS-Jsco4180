@@ -158,31 +158,6 @@ record(ao, "$(P)PRESSURE:MIN:SP")
 alias("$(P)PRESSURE:MIN", "$(P)PRESSURE:MIN:SP:RBV")
 
 #################################
-# 5. VALVE POSITION
-#################################
-#
-# The valve position can be change at any point using the VALVE:POS:SP command
-# (even while the device is pumping). The _VALVE:POS:SP relate to a ramped 
-# change in valve position that are used only in a saved program. Refer to 
-# Sec.6 "File" for details.
-#
-record(ai, "$(P)VALVE:POS") 
-{
-    field(DESC, "Current valve position")
-    field(DTYP, "stream")
-    field(SCAN, "1 second")
-    field(VAL, "1")
-    
-    field(INP, "@jsco4180.proto getValvePosition $(PORT)")
-    
-    info(INTEREST, "HIGH")
-    field(SIML, "$(P)SIM")
-    field(SIOL, "$(P)SIM:VALVE:POS")
-    field(SDIS, "$(P)DISABLE")
-    field(EGU, "")
-}
-
-#################################
 # 7. PUMP CONTROL
 #################################
 #
@@ -511,7 +486,7 @@ record(calcout, "$(P)TIME:RUN:CALCVOL")
 #################################
 #
 # The components A, B, and, C can be change only during a program execution.
-# The COMP:SPP relates to a ramped change in compositions that is used only 
+# The COMP:SP relates to a ramped change in compositions that is used only 
 # in a saved program. Refer to Sec.6 "File" for details.
 #
 # NB: Component D is auto-calculated by the device.
