@@ -74,13 +74,7 @@ alias("$(P)FLOWRATE:SP", "$(P)FLOWRATE:SP:RBV")
 #################################
 # 3. PRESSURE
 #################################
-#
-# The maximum and minimum pressures can be change at any point using the 
-# PRESSURE:MAX:SP/PRESSURE:MIN:SP commands (even while the device is pumping).
-# The _PRESSURE:MAX:SP/_PRESSURE:MIN:SP relate to a ramped change in pressure
-# limits that are used only in a saved program. Refer to Sec.6 "File" for 
-# details.
-#
+
 record(ai, "$(P)PRESSURE") 
 {
     field(DESC, "Current pressure in kg/cm^2")
@@ -130,32 +124,6 @@ record(ao, "$(P)PRESSURE:MAX:SP")
 }
 alias("$(P)PRESSURE:MAX", "$(P)PRESSURE:MAX:SP:RBV")
 
-record(ao, "$(P)_PRESSURE:MAX:SP") 
-{
-    field(DESC, "Ramp the maximum pressure in kg/cm^2")
-    field(DTYP, "stream")
-    field(DRVH, "700")
-    field(DRVL, "0")
-    
-    field(OUT, "@jsco4180.proto _setPressureMax($(P)PRESSURE:,MAX:TIME:SP,MAX:SP:RBV) $(PORT)")
-    
-    field(EGU, "kg/cm^2")
-    field(SIML, "$(P)SIM")
-    field(SIOL, "$(P)SIM:_PRESSURE:MAX:SP")
-    field(SDIS, "$(P)DISABLE")
-}
-
-record(ao, "$(P)PRESSURE:MAX:TIME:SP")
-{
-    field(DESC, "Desired ramp time in min")
-    field(DTYP, "Soft Channel")
-    field(DRVH, "999.9")
-    field(DRVL, "0.0")
-    
-    field(EGU, "min")
-}
-alias("$(P)PRESSURE:MAX:TIME:SP", "$(P)PRESSURE:MAX:TIME")
-
 record(ai, "$(P)PRESSURE:MIN") 
 {
     field(DESC, "Minimum pressure in kg/cm^2")
@@ -188,34 +156,6 @@ record(ao, "$(P)PRESSURE:MIN:SP")
     field(SDIS, "$(P)DISABLE")
 }
 alias("$(P)PRESSURE:MIN", "$(P)PRESSURE:MIN:SP:RBV")
-
-record(ao, "$(P)_PRESSURE:MIN:SP") 
-{
-    field(DESC, "Ramp the minimum pressure in kg/cm^2")
-    field(DTYP, "stream")
-    field(DRVH, "700")
-    field(DRVL, "0")
-    
-    field(OUT, "@jsco4180.proto _setPressureMin($(P)PRESSURE:,MIN:TIME:SP,MIN:SP:RBV) $(PORT)")
-    
-    field(EGU, "kg/cm^2")
-    field(SIML, "$(P)SIM")
-    field(SIOL, "$(P)SIM:_PRESSURE:MIN:SP")
-    field(SDIS, "$(P)DISABLE")
-}
-
-record(ao, "$(P)PRESSURE:MIN:TIME:SP")
-{
-    field(DESC, "Desired runtime in min")
-    field(DTYP, "Soft Channel")
-    field(DRVH, "999.9")
-    field(DRVL, "0.0")
-    
-    field(EGU, "min")
-    info(INTEREST, "HIGH")
-}
-alias("$(P)PRESSURE:MIN:TIME:SP", "$(P)PRESSURE:MIN:TIME")
-
 
 #################################
 # 4. PUMP ON/OFF TIMER
@@ -859,12 +799,6 @@ record(ai, "$(P)SIM:TIME")
     field(DTYP, "Soft Channel")
 }
 
-record(ao, "$(P)SIM:_PRESSURE:MIN:SP")
-{
-    field(SCAN, "Passive")
-    field(DTYP, "Soft Channel")
-}
-
 record(ai, "$(P)SIM:PRESSURE:MAX")
 {
     field(SCAN, "Passive")
@@ -958,12 +892,6 @@ record(ai, "$(P)SIM:FLOWRATE:SP")
 }
 
 alias("$(P)SIM:FLOWRATE:SP","$(P)SIM:FLOWRATE:SP:RBV")
-
-record(ao, "$(P)SIM:_PRESSURE:MAX:SP")
-{
-    field(SCAN, "Passive")
-    field(DTYP, "Soft Channel")
-}
 
 record(ai, "$(P)SIM:COMP:C")
 {

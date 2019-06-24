@@ -29,11 +29,6 @@ setPressureMax {
     @mismatch { mismatch_catcher; }
 }
 
-_setPressureMax {
-    out "%(\$1\$2).1f %(\$1\$3)d pmax set";
-    @mismatch { mismatch_catcher; }
-}
-
 getPressureMax {
     out "a_pmax load p";
     in "%d";
@@ -42,11 +37,6 @@ getPressureMax {
 
 setPressureMin {
     out "%d pmin set";
-    @mismatch { mismatch_catcher; }
-}
-
-_setPressureMin {
-    out "%(\$1\$2).1f %(\$1\$3)d pmin set";
     @mismatch { mismatch_catcher; }
 }
 
