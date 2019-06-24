@@ -86,7 +86,7 @@ getCompD {
     @mismatch { mismatch_catcher; }
 }
 
-_setComp {
+setComp {
     out "0 fileno set"
     out "0 openfile";
     out "%(\$1\$2).1f %(\$1\$3).1f %(\$1\$4).1f %(\$1\$5).1f comp set";

@@ -625,7 +625,7 @@ record(bo, "$(P)COMP:SP")
     field(ZNAM, "")
     field(ONAM, "Set")
     
-    field(OUT, "@jsco4180.proto _setComp($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP) $(PORT)")
+    field(OUT, "@jsco4180.proto setComp($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP) $(PORT)")
     
     field(SIML, "$(P)SIM")
     field(SIOL, "$(P)SIM:COMP:SP")
