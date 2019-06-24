@@ -158,61 +158,6 @@ record(ao, "$(P)PRESSURE:MIN:SP")
 alias("$(P)PRESSURE:MIN", "$(P)PRESSURE:MIN:SP:RBV")
 
 #################################
-# 4. PUMP ON/OFF TIMER
-#################################
-#
-# The device can automatically switch the pump on or off within a 99.9 hour
-# window. These are used with saved programs. For general control see Sec.7 
-# "Pump Control".
-#
-record(ao, "$(P)_PUMP:TIMER:ON:SP") 
-{
-    field(DESC, "Pump-on timer in hour")
-    field(DTYP, "stream")
-    field(DRVH, "99.9")
-    field(DRVL, "0.0")
-    
-    field(OUT, "@jsco4180.proto setPumpOnTimer $(PORT)")
-    
-    field(PREC, "1")
-    field(EGU, "hour")
-    field(SIML, "$(P)SIM")
-    field(SIOL, "$(P)SIM:_PUMP:TIMER:ON:SP")
-    field(SDIS, "$(P)DISABLE")
-}
-alias("$(P)_PUMP:TIMER:ON:SP", "$(P)_PUMP:TIMER:ON")
-
-record(ao, "$(P)_PUMP:TIMER:OFF:SP") 
-{
-    field(DESC, "Pump-off timer in hours")
-    field(DTYP, "stream")
-    field(DRVH, "99.9")
-    field(DRVL, "0.0")
-    
-    field(OUT, "@jsco4180.proto setPumpOffTimer($(P)_PUMP:TIME:SP) $(PORT)")
-    
-    field(PREC, "1")
-    field(EGU, "hour")
-    field(SIML, "$(P)SIM")
-    field(SIOL, "$(P)SIM:_PUMP:TIMER:OFF:SP")
-    field(SDIS, "$(P)DISABLE")
-}
-alias("$(P)_PUMP:TIMER:OFF:SP", "$(P)_PUMP:TIMER:OFF")
-
-record(ao, "$(P)_PUMP:TIME:SP")
-{
-    field(DESC, "Desired runtime in hours")
-    field(DTYP, "Soft Channel")
-    field(DRVH, "99.9")
-    field(DRVL, "0.0")
-    field(VAL, "60")
-    
-    field(PREC, "1")
-    field(EGU, "hour")
-}
-alias("$(P)_PUMP:TIME:SP", "$(P)_PUMP:TIME:SP:RBV")
-
-#################################
 # 5. VALVE POSITION
 #################################
 #
@@ -809,14 +754,6 @@ alias("$(P)SIM:PRESSURE:MAX","$(P)SIM:PRESSURE:MAX:SP")
 
 alias("$(P)SIM:PRESSURE:MAX","$(P)SIM:PRESSURE:MAX:SP:RBV")
 
-record(ao, "$(P)SIM:_PUMP:TIMER:OFF")
-{
-    field(SCAN, "Passive")
-    field(DTYP, "Soft Channel")
-}
-
-alias("$(P)SIM:_PUMP:TIMER:OFF","$(P)SIM:_PUMP:TIMER:OFF:SP")
-
 record(ai, "$(P)SIM:PRESSURE")
 {
     field(SCAN, "Passive")
@@ -848,14 +785,6 @@ record(ai, "$(P)SIM:COMP:D")
     field(SCAN, "Passive")
     field(DTYP, "Soft Channel")
 }
-
-record(ao, "$(P)SIM:_PUMP:TIMER:ON")
-{
-    field(SCAN, "Passive")
-    field(DTYP, "Soft Channel")
-}
-
-alias("$(P)SIM:_PUMP:TIMER:ON","$(P)SIM:_PUMP:TIMER:ON:SP")
 
 record(ai, "$(P)SIM:VALVE:POS")
 {

@@ -46,16 +46,6 @@ getPressureMin {
     @mismatch { mismatch_catcher; }
 }
 
-setPumpOffTimer {
-    out "%(\$1).1f offtimer set";
-    @mismatch { mismatch_catcher; }
-}
-
-setPumpOnTimer {
-    out "%.1f ontimer set";
-    @mismatch { mismatch_catcher; }
-}
-
 readErrorString {
     in "\%\%%[^%]\%\%";
     @mismatch { mismatch_catcher; }
