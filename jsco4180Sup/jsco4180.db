@@ -1,21 +1,6 @@
 # Created by Aaron James Long - 2019- RAL (ISIS) - Experimental Controls Group
 #=============================================================================
-# JASCO HPLC PU-4180 Pump IOC
-# 
-# Dependencies
-#     jsco4180.proto
-#
-# RS-232C Specifications
-#     Baud rate: 4800 Baud
-#     Stop bits: 2 bit
-#        Parity: None
-#   Data length: 8 bit
-#  Flow control: Xon/Xoff control
-#
-# Notes:
-#     Communication command is terminated with CR.
-#     Communication return is terminated with CR and LF. 
-#
+# JASCO HPLC PU-4180 Pump IOC - Requires jsco4180.proto
 
 #################################
 # 1. COMMON RECORDS
