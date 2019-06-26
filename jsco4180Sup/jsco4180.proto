@@ -88,10 +88,16 @@ getCompD {
 
 setComp {
     out "1 pump set";
+    wait 150;
     out "0 fileno set";
+    wait 150;
     out "0 openfile";
+    wait 150;
     out "%(\$1\$2).1f %(\$1\$3).1f %(\$1\$4).1f %(\$1\$5).1f comp set";
+    wait 150;
     out "closefile";
+    wait 150;
+    out "8 pump set";
     @mismatch { mismatch_catcher; }
 }
 
