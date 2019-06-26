@@ -207,21 +207,17 @@ alias("$(P)_PUMP:SP", "$(P)_PUMP")
 record(sseq, "$(P)START:SP")
 {
     field(DESC, "Start the pump")
-    
-    field(LNK1, "$(P)_PUMP:SP CA")
+
+    field(LNK1, "$(P)COMP:SP CA")
     field(DO1, "1")
     field(WAIT1, "Wait")
     
-    field(LNK2, "$(P)COMP:SP CA")
-    field(DO2, "1")
+    field(LNK2, "$(P)_PUMP:SP CA")
+    field(DO2, "6")
     field(WAIT2, "Wait")
     
-    field(LNK3, "$(P)_PUMP:SP CA")
-    field(DO3, "6")
-    field(WAIT3, "Wait")
-    
-    field(LNK4, "$(P)TIME:MODE PP")
-    field(DO4, "1")
+    field(LNK3, "$(P)TIME:MODE PP")
+    field(DO3, "1")
     
     info(INTEREST, "HIGH")
 }
@@ -230,20 +226,16 @@ record(sseq, "$(P)TIMED:SP")
 {
     field(DESC, "Start timed pump for set time or volume")
     
-    field(LNK1, "$(P)_PUMP:SP CA")
+    field(LNK1, "$(P)COMP:SP CA")
     field(DO1, "1")
     field(WAIT1, "Wait")
     
-    field(LNK2, "$(P)COMP:SP CA")
-    field(DO2, "1")
+    field(LNK2, "$(P)_PUMP:SP CA")
+    field(DO2, "8")
     field(WAIT2, "Wait")
     
-    field(LNK3, "$(P)_PUMP:SP CA")
-    field(DO3, "8")
-    field(WAIT3, "Wait")
-    
-    field(LNK4, "$(P)TIME:MODE PP")
-    field(DO4, "2")
+    field(LNK3, "$(P)TIME:MODE PP")
+    field(DO3, "2")
     
     info(INTEREST, "HIGH")
 }
@@ -261,18 +253,15 @@ record(seq, "$(P)STOP:SP")
     info(INTEREST, "HIGH")
 }
 
-record(sseq, "$(P)RESET:SP")
+record(ao, "$(P)RESET:SP")
 {
     field(DESC, "Reset pump to initial conditions")
+    field(DTYP, "stream")
     
-    field(LNK1, "$(P)_PUMP:SP CA")
-    field(DO1, "8")
-    field(WAIT1, "Wait")
-    
-    field(LNK2, "$(P)_PUMP:SP PP")
-    field(DO2, "1")
+    field(OUT, "@jsco4180.proto reset $(PORT)")
     
     info(INTEREST, "HIGH")
+    field(SDIS, "$(P)DISABLE")
 }
 alias("$(P)RESET:SP", "$(P)RESET")
 
