@@ -1,7 +1,7 @@
 InTerminator = CR LF;
 OutTerminator = CR;
 
-input_tolerance = 120; # millisecond wait time between sequenced inputs
+input_delay = 120; # millisecond wait time between sequenced inputs
 
 readErrorStr {
     in "\%\%%[^%]\%\%";
@@ -9,121 +9,121 @@ readErrorStr {
 
 setFlowrate {
     out "%.3f flowrate set";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 getFlowrate {
     out "a_flow load p";
     in "%f";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 getPressure {
     out "a_press1 load p";
     in "%d";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 setPressureMax {
     out "%d pmax set";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 getPressureMax {
     out "a_pmax load p";
     in "%d";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 setPressureMin {
     out "%d pmin set";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 getPressureMin {
     out "a_pmin load p";
     in "%d";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 setPump {
     out "%d pump set";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 getTime {
     out "current_time load p";
     in "%d";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 getCompA {
     out "compa load p";
     in "%f";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 getCompB {
     out "compb load p";
     in "%f";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 getCompC {
     out "compc load p";
     in "%f";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 getCompD {
     out "compd load p";
     in "%f";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 setComp {
     out "1 pump set";
-    wait $input_tolerance;
+    wait $input_delay;
     out "0 fileno set";
-    wait $input_tolerance;
+    wait $input_delay;
     out "0 openfile";
-    wait $input_tolerance;
+    wait $input_delay;
     out "%(\$1\$2).1f %(\$1\$3).1f %(\$1\$4).1f %(\$1\$5).1f comp set";
-    wait $input_tolerance;
+    wait $input_delay;
     out "closefile";
-    wait $input_tolerance;
+    wait $input_delay;
     out "8 pump set";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 crash {
     out "1 pump set";
-    wait $input_tolerance;
+    wait $input_delay;
     out "0 fileno set";
-    wait $input_tolerance;
+    wait $input_delay;
     out "0 openfile";
-    wait $input_tolerance;
+    wait $input_delay;
     out "0.0 25 25 25 comp set";
-    wait $input_tolerance;
+    wait $input_delay;
     out "closefile";
-    wait $input_tolerance;
+    wait $input_delay;
     out "8 pump set";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 getError {
     out "trouble load p";
     in "%d";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 setError {
     out "0 trouble set";
-    wait $input_tolerance;
+    wait $input_delay;
 }
 
 reset {
     out "8 pump set";
-    wait $input_tolerance;
+    wait $input_delay;
     out "1 pump set";
 }

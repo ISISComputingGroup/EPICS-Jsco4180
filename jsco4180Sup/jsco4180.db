@@ -656,7 +656,8 @@ record(mbbi, "$(P)ERROR")
     field(EISV, "MAJOR")
 
     field(INP, "@jsco4180.proto getError($(P)TROUBLE) $(PORT)")
-    
+
+    info(archive, "VAL")
     info(INTEREST, "HIGH")
     field(SIML, "$(P)SIM")
     field(SIOL, "$(P)SIM:ERROR")
@@ -688,7 +689,8 @@ record(stringin, "$(P)ERROR:STR")
     field(VAL, "No error")
     
     field(INP, "@jsco4180.proto readErrorStr $(PORT)")
-    
+
+    info(archive, "VAL")
     field(SIML, "$(P)SIM")
     field(SIOL, "$(P)SIM:ERROR:STR")
     field(SDIS, "$(P)DISABLE"
@@ -704,7 +706,8 @@ record(bi, "$(P)ERROR:COMP")
     
     field(ONAM, "Single Channel")
     field(OSV, "MAJOR")
-    
+
+    info(archive, "VAL")
     info(INTEREST, "HIGH")
     field(SIML, "$(P)SIM")
     field(SIOL, "$(P)SIM:ERROR:COMP")

@@ -1,8 +1,9 @@
 program detect_jasco_error_state("SETPOINT,READBACK,STATUS,PUMPRUN,TIMERUN,PUMPSTOP,MODE,ERROR,TOLERANCE,DELAY")
 
 /* The JASCO PU-4180 can enter a state where users will be unable to set components on the device. This state machine
-   tries to detect when this issue occurs and restart the pump run. If the components have not updated after a number
-   of retries then the pump will be stopped and an error record will be updated to warn the user. */
+   tries to detect when this issue occurs and restart the pump run (which retries setting the components). If the 
+   components have not updated after a number of retries then the pump will be stopped and an error record will be 
+   updated to warn the user. */
 
 #include "seqPVmacros.h"
 %% #include "errlog.h"
