@@ -40,7 +40,7 @@ record(ai, "$(P)FLOWRATE")
     field(DTYP, "stream")
     field(SCAN, "1 second")
     
-    field(INP, "@jsco4180.proto getFlowrate $(PORT)")
+    field(INP, "@jsco4180.proto getFlowrate($(P)TROUBLE) $(PORT)")
     
     field(PREC, "3")
     field(EGU, "mL/min")
@@ -60,7 +60,7 @@ record(ao, "$(P)FLOWRATE:SP")
     field(DRVL, "0.000")
     field(VAL, "0.010")
     
-    field(OUT, "@jsco4180.proto setFlowrate $(PORT)")
+    field(OUT, "@jsco4180.proto setFlowrate($(P)TROUBLE) $(PORT)")
     
     field(PREC, "3")
     field(EGU, "mL/min")
@@ -81,7 +81,7 @@ record(ai, "$(P)PRESSURE")
     field(DTYP, "stream")
     field(SCAN, "1 second")
     
-    field(INP, "@jsco4180.proto getPressure $(PORT)")
+    field(INP, "@jsco4180.proto getPressure($(P)TROUBLE) $(PORT)")
     
     field(EGU, "kg/cm^2")
     info(INTEREST, "HIGH")
@@ -97,7 +97,7 @@ record(ai, "$(P)PRESSURE:MAX")
     field(DTYP, "stream")
     field(SCAN, "1 second")
     
-    field(INP, "@jsco4180.proto getPressureMax $(PORT)")
+    field(INP, "@jsco4180.proto getPressureMax($(P)TROUBLE) $(PORT)")
     
     field(EGU, "kg/cm^2")
     info(INTEREST, "HIGH")
@@ -114,7 +114,7 @@ record(ao, "$(P)PRESSURE:MAX:SP")
     field(DRVL, "0")
     field(VAL, "400")
     
-    field(OUT, "@jsco4180.proto setPressureMax $(PORT)")
+    field(OUT, "@jsco4180.proto setPressureMax($(P)TROUBLE) $(PORT)")
     
     field(EGU, "kg/cm^2")
     info(INTEREST, "HIGH")
@@ -130,7 +130,7 @@ record(ai, "$(P)PRESSURE:MIN")
     field(DTYP, "stream")
     field(SCAN, "1 second")
     
-    field(INP, "@jsco4180.proto getPressureMin $(PORT)")
+    field(INP, "@jsco4180.proto getPressureMin($(P)TROUBLE) $(PORT)")
     
     field(EGU, "kg/cm^2")
     info(INTEREST, "HIGH")
@@ -147,7 +147,7 @@ record(ao, "$(P)PRESSURE:MIN:SP")
     field(DRVL, "0")
     field(VAL, "1")
     
-    field(OUT, "@jsco4180.proto setPressureMin $(PORT)")
+    field(OUT, "@jsco4180.proto setPressureMin($(P)TROUBLE) $(PORT)")
     
     field(EGU, "kg/cm^2")
     info(INTEREST, "HIGH")
@@ -197,12 +197,20 @@ record(mbbo, "$(P)_PUMP:SP")
     field(EIVL, "8")
     field(EIST, "ResetReRun")
     
-    field(OUT, "@jsco4180.proto setPump $(PORT)")
+    field(OUT, "@jsco4180.proto setPump($(P)TROUBLE) $(PORT)")
     field(SIML, "$(P)SIM")
     field(SIOL, "$(P)SIM:_PUMP:SP")
     field(SDIS, "$(P)DISABLE")
 }
 alias("$(P)_PUMP:SP", "$(P)_PUMP")
+
+record(ao, "$(P)_CRASH")
+{
+    field(DESC, "Attempt to hard crash the device")
+    field(DTYP, "stream")
+    
+    field(OUT, "@jsco4180.proto crash($(P)TROUBLE) $(PORT)")
+}
 
 record(sseq, "$(P)START:SP")
 {
@@ -250,7 +258,7 @@ record(ao, "$(P)RESET:SP")
     field(DESC, "Reset pump to initial conditions")
     field(DTYP, "stream")
     
-    field(OUT, "@jsco4180.proto reset $(PORT)")
+    field(OUT, "@jsco4180.proto reset($(P)TROUBLE) $(PORT)")
     
     info(INTEREST, "HIGH")
     field(SDIS, "$(P)DISABLE")
@@ -298,7 +306,7 @@ record(ai, "$(P)TIME")
     field(DTYP, "stream")
     field(SCAN, "1 second")
     
-    field(INP, "@jsco4180.proto getTime $(PORT)")
+    field(INP, "@jsco4180.proto getTime($(P)TROUBLE) $(PORT)")
     
     field(FLNK, "$(P)TIME:RUN:CHECK")
     field(EGU, "s")
@@ -478,7 +486,7 @@ record(ai, "$(P)COMP:A")
     field(DTYP, "stream")
     field(SCAN, "1 second")
     
-    field(INP, "@jsco4180.proto getCompA $(PORT)")
+    field(INP, "@jsco4180.proto getCompA($(P)TROUBLE) $(PORT)")
     
     field(EGU, "%")
     info(INTEREST, "HIGH")
@@ -508,7 +516,7 @@ record(ai, "$(P)COMP:B")
     field(DTYP, "stream")
     field(SCAN, "1 second")
     
-    field(INP, "@jsco4180.proto getCompB $(PORT)")
+    field(INP, "@jsco4180.proto getCompB($(P)TROUBLE) $(PORT)")
     
     field(EGU, "%")
     info(INTEREST, "HIGH")
@@ -536,7 +544,7 @@ record(ai, "$(P)COMP:C")
     field(DTYP, "stream")
     field(SCAN, "1 second")
     
-    field(INP, "@jsco4180.proto getCompC $(PORT)")
+    field(INP, "@jsco4180.proto getCompC($(P)TROUBLE) $(PORT)")
 
     field(EGU, "%")
     info(INTEREST, "HIGH")
@@ -564,7 +572,7 @@ record(ai, "$(P)COMP:D")
     field(DTYP, "stream")
     field(SCAN, "1 second")
     
-    field(INP, "@jsco4180.proto getCompD $(PORT)")
+    field(INP, "@jsco4180.proto getCompD($(P)TROUBLE) $(PORT)")
     
     field(EGU, "%")
     info(INTEREST, "HIGH")
@@ -609,18 +617,22 @@ alias("$(P)COMP:TIME:SP", "$(P)COMP:TIME")
 #
 # The following records handle this:
 #
-#  ERROR:SP - If the device receives a trouble message, the controller must clear
-#             the trouble status.
+#      ERROR - Error returned from the device from the getError command.
 #
-#     ERROR - The device can automatically detect some problems and will transmit
-#             these to the controller.
+#   ERROR:SP - If the device receives a trouble message, the controller must clear
+#              the trouble status.
 #
-# ERROR:STR - If a command is sent to the device that is erroneous the device will
-#             ignore the input and output a string with diagnostics information.
+#  ERROR:STR - The device can return error strings in the event of an input or 
+#              spontaneous error.
+#
+# ERROR:COMP - If the device is in a mode where components cannot be set there is 
+#              a state machine that will check if the components are within a user
+#              defined tolerance (ERROR:TOL) and attempt to reset the components 3
+#              times with a delay (ERROR:DELAY).
 #
 record(mbbi, "$(P)ERROR") 
 {
-    field(DESC, "Device auto-error information")
+    field(DESC, "Device error status")
     field(DTYP, "stream")
     field(SCAN, "1 second")
     
@@ -628,18 +640,22 @@ record(mbbi, "$(P)ERROR")
     field(ZRST, "No error")
     
     field(ONVL, "1")
-    field(ONST, "Under press")
+    field(ONST, "Over press")
+    field(ONSV, "MAJOR")
     
     field(TWVL, "2")
-    field(TWST, "Over press")
+    field(TWST, "Under press")
+    field(TWSV, "MAJOR")
     
     field(FRVL, "4")
     field(FRST, "Hardware error")
+    field(FRSV, "MAJOR")
     
     field(EIVL, "8")
     field(EIST, "Pump timer off")
-    
-    field(INP, "@jsco4180.proto getError $(PORT)")
+    field(EISV, "MAJOR")
+
+    field(INP, "@jsco4180.proto getError($(P)TROUBLE) $(PORT)")
     
     info(INTEREST, "HIGH")
     field(SIML, "$(P)SIM")
@@ -654,7 +670,7 @@ record(bo, "$(P)ERROR:SP")
     field(ZNAM, "")
     field(ONAM, "Reset")
     
-    field(OUT, "@jsco4180.proto setError $(PORT)")
+    field(OUT, "@jsco4180.proto setError($(P)TROUBLE) $(PORT)")
     
     info(INTEREST, "HIGH")
     field(SIML, "$(P)SIM")
@@ -664,16 +680,47 @@ record(bo, "$(P)ERROR:SP")
 
 alias("$(P)ERROR:SP", "$(P)ERROR:SP:RBV")
 
-record(stringin, "$(P)ERROR:STR")
+record(stringin, "$(P)ERROR:STR") 
 {
-    field(DESC, "Command input return error")
+    field(DESC, "Last error returned on input")
     field(DTYP, "stream")
     field(SCAN, "I/O Intr")
-    field(INP, "@jsco4180.proto readErrorString $(PORT)")
-
+    field(VAL, "No error")
+    
+    field(INP, "@jsco4180.proto readErrorStr $(PORT)")
+    
     field(SIML, "$(P)SIM")
     field(SIOL, "$(P)SIM:ERROR:STR")
+    field(SDIS, "$(P)DISABLE"
+}
+
+record(bi, "$(P)ERROR:COMP") 
+{
+    field(DESC, "Device component error")
+    field(DTYP, "Soft Channel")
+    field(VAL, "0")
+    
+    field(ZNAM, "No issue")
+    
+    field(ONAM, "Single Channel")
+    field(OSV, "MAJOR")
+    
+    info(INTEREST, "HIGH")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:ERROR:COMP")
     field(SDIS, "$(P)DISABLE")
+}
+
+record(ai, "$(P)ERROR:DELAY")
+{
+    field(DESC, "Delay before trying to reset components")
+    field(VAL, "1")
+}
+
+record(ai, "$(P)ERROR:TOL")
+{
+    field(DESC, "Tolerance between comp SP and RBV")
+    field(VAL, "0")
 }
 
 #################################
@@ -803,3 +850,15 @@ record(ai, "$(P)SIM:PRESSURE:MIN")
 alias("$(P)SIM:PRESSURE:MIN","$(P)SIM:PRESSURE:MIN:SP")
 
 alias("$(P)SIM:PRESSURE:MIN","$(P)SIM:PRESSURE:MIN:SP:RBV")
+
+record(stringin, "$(P)SIM:ERROR:STR")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
+
+record(mbbi, "$(P)SIM:ERROR:COMP")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
