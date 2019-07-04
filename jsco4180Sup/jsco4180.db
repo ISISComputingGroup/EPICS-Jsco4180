@@ -204,12 +204,13 @@ record(mbbo, "$(P)_PUMP:SP")
 }
 alias("$(P)_PUMP:SP", "$(P)_PUMP")
 
-record(ao, "$(P)_CRASH")
+# Used only internally for testing
+record(ao, "$(P)_EXERCISE")
 {
-    field(DESC, "Attempt to hard crash the device")
+    field(DESC, "Attempt to exercise the device")
     field(DTYP, "stream")
     
-    field(OUT, "@jsco4180.proto crash($(P)TROUBLE) $(PORT)")
+    field(OUT, "@jsco4180.proto exercise($(P)TROUBLE) $(PORT)")
 }
 
 record(sseq, "$(P)START:SP")

@@ -96,7 +96,7 @@ setComp {
     wait $input_delay;
 }
 
-crash {
+exercise {
     out "1 pump set";
     wait $input_delay;
     out "0 fileno set";
@@ -126,4 +126,5 @@ reset {
     out "8 pump set";
     wait $input_delay;
     out "1 pump set";
+    wait $input_delay;
 }
