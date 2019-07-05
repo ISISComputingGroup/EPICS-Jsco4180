@@ -109,6 +109,8 @@ exercise {
     wait $input_delay;
     out "8 pump set";
     wait $input_delay;
+    out "1 pump set";
+    wait $input_delay;
 }
 
 getError {

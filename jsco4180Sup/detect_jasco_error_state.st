@@ -29,7 +29,9 @@ PV(int, status, "{STATUS}", Monitor);
 
 /* Pump Control related PVs */
 PV(int, pump_run, "{PUMPRUN}", NoMon);
+PV(int, pump_run_processed, "{PUMPRUN}.BUSY", Monitor);
 PV(int, pump_timed, "{TIMERUN}", NoMon);
+PV(int, pump_timed_processed, "{TIMERUN}.BUSY", Monitor);
 PV(int, pump_stop, "{PUMPSTOP}", NoMon);
 PV(int, pump_error, "{ERROR}", NoMon);
 PV(int, pump_mode, "{MODE}", Monitor);
@@ -47,24 +49,40 @@ int notWithinTolerance(double setpoint, double readback, double tolerance) {
 
 }%
 
+%{
+int runStarted(int pump_run_processed, int pump_timed_processed) {
+    if ( pump_run_processed || pump_timed_processed ) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+}%
+
 ss detect_jasco_error_state
 {
-    /* Initial state. */
     state idle
+    {
+        /* Initial state. */
+        when(runStarted(pump_run_processed, pump_timed)) 
+        {
+        } state check_mode
+    }
+    state check_mode
     {
         /* setpoint alarm must be zero to avoid sending zero to device when first starting driver (SP will be UDF_alarm) */
         when(notWithinTolerance(setpoint, readback, tolerance) && setpoint_alarm == 0 && status == 1) 
         {
             errlogSevPrintf(errlogMinor, "detect_jasco_error_state: setpoint ('%s') not equal readback ('%s'). Reprocessing pump run in %f seconds if still not the same.\n", setpoint_description, readback_description, delay);
-
+            
             epicsThreadSleep(delay);
-
+            
             if (notWithinTolerance(setpoint, readback, tolerance) && setpoint_alarm == 0 && status == 1 ) {
                 errlogSevPrintf(errlogMinor, "detect_jasco_error_state: setpoint ('%s') not equal readback ('%s'). Reprocessing pump run now, attempt ('%i')...\n", setpoint_description, readback_description, retries);
+                PVPUT(pump_error, 1)
                 if (retries > 3) {
                     errlogSevPrintf(errlogMinor, "detect_jasco_error_state: Not reprocessing setpoint ('%s') because maximum retries ('%i') exceeded. Stopping pump.\n", setpoint_description, retries);
                     PVPUT(pump_stop, 1)
-                    PVPUT(pump_error, 1)
                 } else {
                     retries += 1;
                     if (pump_mode == 1) {
@@ -73,10 +91,10 @@ ss detect_jasco_error_state
                         PVPUT(pump_timed, 1)
                     }
                 }
-            } else {
+            } /*else {
                 errlogSevPrintf(errlogMinor, "detect_jasco_error_state: setpoint ('%s') equal readback ('%s'). \n", setpoint_description, readback_description, retries);
                 PVPUT(pump_error, 0)
-            }
+            } */
         } state wait
         when(notWithinTolerance(setpoint, readback, tolerance) == FALSE && setpoint_alarm == 0 && status == 1 && retries != 0) 
         {
@@ -91,6 +109,6 @@ ss detect_jasco_error_state
       when(1)
       {
         epicsThreadSleep(delay);
-      } state idle
+      } state check_mode
     }
 }
