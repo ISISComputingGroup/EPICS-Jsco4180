@@ -29,9 +29,7 @@ PV(int, status, "{STATUS}", Monitor);
 
 /* Pump Control related PVs */
 PV(int, pump_run, "{PUMPRUN}", NoMon);
-PV(int, pump_run_processed, "{PUMPRUN}.BUSY", Monitor);
 PV(int, pump_timed, "{TIMERUN}", NoMon);
-PV(int, pump_timed_processed, "{TIMERUN}.BUSY", Monitor);
 PV(int, pump_stop, "{PUMPSTOP}", NoMon);
 PV(int, pump_error, "{ERROR}", NoMon);
 PV(int, pump_reset, "{RESET}", NoMon);
@@ -51,21 +49,8 @@ int notWithinTolerance(double setpoint, double readback, double tolerance) {
 
 }%
 
-%{
-int runStarted(int pump_run_processed, int pump_timed_processed) {
-    return ( pump_run_processed || pump_timed_processed );
-}
-}%
-
 ss detect_jasco_error_state
 {
-    state idle
-    {
-        /* Initial state. */
-        when(runStarted(pump_run_processed, pump_timed_processed)) 
-        {
-        } state check_mode
-    }
     state check_mode
     {
         /* setpoint alarm must be zero to avoid sending zero to device when first starting driver (SP will be UDF_alarm) */
@@ -85,10 +70,14 @@ ss detect_jasco_error_state
                 } else {
                     retries += 1;
                     if (status == 1) {
+                        errlogSevPrintf(errlogMinor, "Resetting pump");
                         PVPUT(pump_reset, 1);
+                        errlogSevPrintf(errlogMinor, "Restarting run");
                         PVPUT(pump_run, 1);
                     } else if (status != 1) {
+                        errlogSevPrintf(errlogMinor, "Resetting pump");
                         PVPUT(pump_reset, 1);
+                        errlogSevPrintf(errlogMinor, "Restarting run");
                         PVPUT(pump_timed, 1);
                     }
                 }
@@ -99,7 +88,7 @@ ss detect_jasco_error_state
             errlogSevPrintf(errlogMinor, "detect_jasco_error_state: setpoint ('%s') equals readback ('%s'). Current retries ('%i') reset to 0.\n", setpoint_description, readback_description, retries);
             retries = 0;
             PVPUT(pump_error, 0);
-        } state idle
+        } state wait
     }
 
     state wait
