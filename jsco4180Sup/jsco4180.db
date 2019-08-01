@@ -244,18 +244,6 @@ record(mbbo, "$(P)_PUMP:SP")
 }
 alias("$(P)_PUMP:SP", "$(P)_PUMP")
 
-# --- Used only internally for testing ---
-# The pump has known stability issues relating to both the delay between executing commands
-# and executing commands while program files are open. This exercise record, is used
-# to perform stability tests using an external script.
-record(ao, "$(P)_EXERCISE")
-{
-    field(DESC, "Attempt to exercise the device")
-    field(DTYP, "stream")
-    
-    field(OUT, "@jsco4180.proto exercise $(PORT)")
-}
-
 record(ao, "$(P)_TEST_CRASH")
 {
     field(DESC, "Crash the real device")

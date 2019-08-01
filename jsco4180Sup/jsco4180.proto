@@ -119,27 +119,6 @@ executeProgram {
     wait $input_delay;
 }
 
-# The pump has known stability issues relating to both the delay between executing commands
-# and executing commands while program files are open. This exercise functions, is used
-# to perform stability tests using an external script. The subtle difference here is that
-# we execute a pump stop after the program has been created and executed
-exercise {
-    out "1 pump set";
-    wait $input_delay;
-    out "0 fileno set";
-    wait $input_delay;
-    out "0 openfile";
-    wait $input_delay;
-    out "0.0 25 25 25 comp set";
-    wait $input_delay;
-    out "0 closefile";
-    wait $input_delay;
-    out "8 pump set";
-    wait $input_delay;
-    out "1 pump set";
-    wait $input_delay;
-}
-
 testCrash {
     out "0 fileno set";
     wait $input_delay;
