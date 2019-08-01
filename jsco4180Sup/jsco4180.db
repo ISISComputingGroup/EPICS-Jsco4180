@@ -69,7 +69,24 @@ record(ao, "$(P)FLOWRATE:SP")
     field(SIOL, "$(P)SIM:FLOWRATE:SP")
     field(SDIS, "$(P)DISABLE")
 }
-alias("$(P)FLOWRATE:SP", "$(P)FLOWRATE:SP:RBV")
+
+record(ai, "$(P)FLOWRATE:SP:RBV") 
+{
+    field(DESC, "Pump flowrate in mL/min")
+    field(DTYP, "stream")
+    field(SCAN, "1 second")
+    
+    field(INP, "@jsco4180.proto getFlowrateRBV $(PORT)")
+    
+    field(PREC, "3")
+    field(EGU, "mL/min")
+    info(INTEREST, "HIGH")
+    info(archive, "VAL")
+    info(alarm, "JSCO4180")
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:FLOWRATE:SP:RBV")
+    field(SDIS, "$(P)DISABLE")
+}
 
 #################################
 # 3. PRESSURE
@@ -170,6 +187,29 @@ alias("$(P)PRESSURE:MIN", "$(P)PRESSURE:MIN:SP:RBV")
 # The ability to create user programs and run them using _PUMP:SP is still 
 # available.
 #
+record (mbbi, "$(P)STATUS")
+{
+    field(DESC, "Pump status")
+    field(DTYP, "stream")
+    field(SCAN, "1 second")
+    
+    field(INP, "@jsco4180.proto getStatus $(PORT)")
+    
+    field(ZRVL, "0")
+    field(ZRST, "Off")
+
+    field(ONVL, "1") # Pump on (no program)
+    field(ONST, "Pumping")
+    
+    field(TWVL, "33") # Initial Run (i.e., Program run with time halted)
+    field(TWST, "Pumping")
+    
+    field(THVL, "49") # Program Run (running program with incrementing time)
+    field(THST, "Pumping")
+    
+    field(SDIS, "$(P)DISABLE")
+}
+
 record(mbbo, "$(P)_PUMP:SP") 
 {
     field(DESC, "Pump control")
@@ -204,7 +244,10 @@ record(mbbo, "$(P)_PUMP:SP")
 }
 alias("$(P)_PUMP:SP", "$(P)_PUMP")
 
-# Used only internally for testing
+# --- Used only internally for testing ---
+# The pump has known stability issues relating to both the delay between executing commands
+# and executing commands while program files are open. This exercise record, is used
+# to perform stability tests using an external script.
 record(ao, "$(P)_EXERCISE")
 {
     field(DESC, "Attempt to exercise the device")
@@ -213,43 +256,71 @@ record(ao, "$(P)_EXERCISE")
     field(OUT, "@jsco4180.proto exercise $(PORT)")
 }
 
-record(sseq, "$(P)START:SP")
+record(ao, "$(P)_TEST_CRASH")
+{
+    field(DESC, "Crash the real device")
+    field(DTYP, "stream")
+    
+    field(OUT, "@jsco4180.proto testCrash $(PORT)")
+}
+
+record(bo, "$(P)START:SP")
 {
     field(DESC, "Start the pump")
-
-    field(LNK1, "$(P)COMP:SP CA")
-    field(DO1, "1")
-    field(WAIT1, "Wait")
+    field(DTYP, "stream")
     
-    field(LNK2, "$(P)TIME:MODE PP")
-    field(DO2, "1")
+    field(ZNAM, "")
+    field(ONAM, "Start")
+    
+    field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP,6) $(PORT)")
     
     info(INTEREST, "HIGH")
 }
 
-record(sseq, "$(P)TIMED:SP")
+record(bo, "$(P)STOP:SP")
+{
+    field(DESC, "Stop the pump")
+    field(DTYP, "stream")
+    
+    field(ZNAM, "")
+    field(ONAM, "Stop")
+    
+    field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP,1) $(PORT)")
+    
+    info(INTEREST, "HIGH")
+}
+
+record(bo, "$(P)PUMP_FOR_TIME:SP") 
 {
     field(DESC, "Start timed pump for set time or volume")
+    field(DTYP, "stream")
     
-    field(LNK1, "$(P)COMP:SP CA")
-    field(DO1, "1")
-    field(WAIT1, "Wait")
+    field(ZNAM, "")
+    field(ONAM, "Start")
     
-    field(LNK2, "$(P)TIME:MODE PP")
-    field(DO2, "2")
+    field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP,8) $(PORT)")
+    
+    field(SIML, "$(P)SIM")
+    field(SIOL, "$(P)SIM:TIMED:SP")
+    field(SDIS, "$(P)DISABLE")
     
     info(INTEREST, "HIGH")
 }
+alias("$(P)TIMED:SP", "$(P)TIMED")
 
-record(seq, "$(P)STOP:SP")
+record(bo, "$(P)PUMP_SET_VOLUME:SP") 
 {
-    field(DESC, "Stop pump")
+    field(DESC, "Start timed pump for set time or volume")
+    field(DTYP, "stream")
     
-    field(LNK1, "$(P)_PUMP:SP PP")
-    field(DO1, "1")
+    field(ZNAM, "")
+    field(ONAM, "Start")
     
-    field(LNK2, "$(P)TIME:MODE PP")
-    field(DO2, "0")
+    field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP,8) $(PORT)")
+    
+    field(SIML, "$(P)SIM")
+
+    field(SDIS, "$(P)DISABLE")
     
     info(INTEREST, "HIGH")
 }
@@ -266,25 +337,32 @@ record(ao, "$(P)RESET:SP")
 }
 alias("$(P)RESET:SP", "$(P)RESET")
 
-# Crude pump status check: Is there flow?
-record(calc, "$(P)STATUS:CHECK") 
+#################################
+# 8. FILE CONTROL
+#################################
+#
+# Set the currently selected program or open/close files.
+record(bo, "$(P)FILE:OPEN:SP")
 {
-    field(DESC, "Pump status")
-    field(SCAN, "1 second")
-    field(INPA, "$(P)FLOWRATE CP MS")
+    field(DESC, "Open or close selected file")
+    field(DTYP, "stream")
     
-    field(CALC, "A=0.0?0:1")
-    field(ASG, "READONLY")
+    field(OUT, "@jsco4180.proto setFileState $(PORT)")
+    
+    field(ZNAM, "Closed")
+    field(ONAM, "Open")
+    
+    field(SDIS, "$(P)DISABLE")
 }
 
-record(bi, "$(P)STATUS")
+record(ao, "$(P)FILE:SP")
 {
-    field(DESC, "Pump status")
-    field(INP, "$(P)STATUS:CHECK CP MS")
+    field(DESC, "Select program file")
+    field(DTYP, "stream")
     
-    field(ZNAM, "STOPPED")
-    field(ONAM, "RUNNING")
-    info(INTEREST, "HIGH")
+    field(OUT, "@jsco4180.proto setFileNumber $(PORT)")
+    
+    field(SDIS, "$(P)DISABLE")   
 }
 
 #################################
@@ -358,21 +436,6 @@ record(calcout, "$(P)TIME:VOL:_TOG")
     field(OUT, "$(P)TIME:VOL:SP.DISP PP")
 }
 
-record(mbbi, "$(P)TIME:MODE") 
-{
-    field(DESC, "Mode of time checking")
-    
-    field(ZRVL, "0")
-    field(ONVL, "1")
-    field(TWVL, "2")
-  
-    field(ZRST, "STOPPED")
-    field(ONST, "CONTINUOUS")
-    field(TWST, "TIMED")
-    
-    info(INTEREST, "HIGH")
-}
-
 record(ao, "$(P)TIME:RUN:SP")
 {
     field(DESC, "Pump runtime in seconds")
@@ -407,9 +470,9 @@ record(calcout, "$(P)TIME:RUN:CHECK")
     field(DTYP, "Soft Channel")
     field(INPA, "$(P)TIME")
     field(INPB, "$(P)TIME:RUN:SP")
-    field(INPC, "$(P)TIME:MODE")
+    field(INPC, "$(P)STATUS")
     
-    field(CALC, "(A>=B)&&(C=2)?1:0")
+    field(CALC, "(A>=B)&&(C#0||1)?1:0")
     
     field(OUT, "$(P)STOP:SP PP")
     field(OOPT, "Transition To Non-zero")
@@ -507,6 +570,8 @@ record(ao, "$(P)COMP:A:SP")
     field(VAL, "100")
     
     field(EGU, "%")
+    field(FLNK, "$(P)COMP:D:SP")
+    info(autosaveFields, "VAL")
     info(INTEREST, "HIGH")
 }
 alias("$(P)COMP:A:SP", "$(P)COMP:A:SP:RBV")
@@ -535,6 +600,8 @@ record(ao, "$(P)COMP:B:SP")
     field(DRVL, "0")
 
     field(EGU, "%")
+    field(FLNK, "$(P)COMP:D:SP")
+    info(autosaveFields, "VAL")
     info(INTEREST, "HIGH")
 }
 alias("$(P)COMP:B:SP", "$(P)COMP:B:SP:RBV")
@@ -563,6 +630,8 @@ record(ao, "$(P)COMP:C:SP")
     field(DRVL, "0")
 
     field(EGU, "%")
+    field(FLNK, "$(P)COMP:D:SP")
+    info(autosaveFields, "VAL")
     info(INTEREST, "HIGH")
 }
 alias("$(P)COMP:C:SP", "$(P)COMP:C:SP:RBV")
@@ -583,20 +652,23 @@ record(ai, "$(P)COMP:D")
     field(SDIS, "$(P)DISABLE")
 }
 
-record(bo, "$(P)COMP:SP") 
+record(calc, "$(P)COMP:D:SP") 
 {
-    field(DESC, "Ramp composition component")
-    field(DTYP, "stream")
-    field(ZNAM, "")
-    field(ONAM, "Set")
+    field(DESC, "Component D % set point")  
+    field(HIHI, "101")
+    field(LOLO, "-1")
     
-    field(OUT, "@jsco4180.proto setComp($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP) $(PORT)")
-    
-    field(SIML, "$(P)SIM")
-    field(SIOL, "$(P)SIM:COMP:SP")
-    field(SDIS, "$(P)DISABLE")
+    field(INPA, "$(P)COMP:A:SP")
+    field(INPB, "$(P)COMP:B:SP")
+    field(INPC, "$(P)COMP:C:SP")
+
+    field(CALC, "100-(A+B+C)")
+
+    field(EGU, "%")
+    info(autosaveFields, "VAL")
+    info(INTEREST, "HIGH")
 }
-alias("$(P)COMP:SP", "$(P)COMP")
+alias("$(P)COMP:D:SP", "$(P)COMP:D:SP:RBV")
 
 record(ao, "$(P)COMP:TIME:SP") 
 {
@@ -820,6 +892,12 @@ record(bo, "$(P)SIM:COMP")
 }
 
 alias("$(P)SIM:COMP","$(P)SIM:COMP:SP")
+
+record(ai, "$(P)SIM:FLOWRATE")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+}
 
 record(ai, "$(P)SIM:FLOWRATE:SP")
 {

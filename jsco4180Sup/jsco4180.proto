@@ -5,10 +5,33 @@ input_delay = 120; # millisecond wait time between sequenced inputs
 
 readErrorStr {
     in "\%\%%[^%]\%\%";
+    wait $input_delay;
+}
+
+getStatus {
+    out "status load p";
+    in "%d";
+    wait $input_delay;
+}
+
+setFileNumber {
+    out "%d fileno set";
+    wait $input_delay;
+}
+
+setFileState {
+    out "%{closefile|openfile}";
+    wait $input_delay;
 }
 
 setFlowrate {
     out "%.3f flowrate set";
+    wait $input_delay;
+}
+
+getFlowrateRBV {
+    out "flowrate load p";
+    in "%f";
     wait $input_delay;
 }
 
@@ -81,7 +104,7 @@ getCompD {
     wait $input_delay;
 }
 
-setComp {
+executeProgram {
     out "1 pump set";
     wait $input_delay;
     out "0 fileno set";
@@ -90,12 +113,16 @@ setComp {
     wait $input_delay;
     out "%(\$1\$2).1f %(\$1\$3).1f %(\$1\$4).1f %(\$1\$5).1f comp set";
     wait $input_delay;
-    out "closefile";
+    out "0 closefile";
     wait $input_delay;
-    out "8 pump set";
+    out "\$6 pump set";
     wait $input_delay;
 }
 
+# The pump has known stability issues relating to both the delay between executing commands
+# and executing commands while program files are open. This exercise functions, is used
+# to perform stability tests using an external script. The subtle difference here is that
+# we execute a pump stop after the program has been created and executed
 exercise {
     out "1 pump set";
     wait $input_delay;
@@ -105,11 +132,24 @@ exercise {
     wait $input_delay;
     out "0.0 25 25 25 comp set";
     wait $input_delay;
-    out "closefile";
+    out "0 closefile";
     wait $input_delay;
     out "8 pump set";
     wait $input_delay;
     out "1 pump set";
+    wait $input_delay;
+}
+
+testCrash {
+    out "0 fileno set";
+    wait $input_delay;
+    out "0 openfile";
+    wait $input_delay;
+    out "5.0 flowrate set";
+    # no delay to simulate crash condition
+    out "0.0 25 25 25 comp set";
+    wait $input_delay;
+    out "0 closefile";
     wait $input_delay;
 }
 
@@ -124,7 +164,23 @@ setError {
     wait $input_delay;
 }
 
+# Attempt to re-write a new default settings program file and load it to reset the single
+# channel mode state. This state is caused by an incorrectly written program file.
 reset {
+    out "1 pump set";
+    wait $input_delay;
+    out "closefile";
+    wait $input_delay;
+    out "0 fileno set";
+    wait $input_delay;
+    out "0 openfile";
+    wait $input_delay;
+    out "0.0 flowrate set";
+    wait $input_delay;
+    out "0.0 100 0 0 comp set";
+    wait $input_delay;
+    out "0 closefile";
+    wait $input_delay;
     out "8 pump set";
     wait $input_delay;
     out "1 pump set";
