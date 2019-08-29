@@ -468,7 +468,6 @@ record(calc, "$(P)TIME:VOL:CALCRUN")
     
     field(CALC, "(A/B)*60")
     
-    field(OUT, "$(P)TIME:RUN:SP PP")
     field(ASG, "READONLY")
 }
 
@@ -480,7 +479,6 @@ record(calc, "$(P)TIME:RUN:CALCVOL")
     
     field(CALC, "(A*B)/60")
     
-    field(OUT, "$(P)TIME:VOL:SP PP")
     field(ASG, "READONLY")
 }
 
