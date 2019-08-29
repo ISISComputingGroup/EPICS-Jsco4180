@@ -386,47 +386,6 @@ record(ai, "$(P)TIME")
     field(SDIS, "$(P)DISABLE")
 }
 
-record(bo, "$(P)TIME:CALC:SP")
-{
-    field(DESC, "Pump calculation mode set point")
-    field(PINI, "YES")
-    field(VAL, "0")
-    
-    field(ZNAM, "Time")
-    field(ONAM, "Volume")
-    
-    field(SIML, "$(P)SIM")
-    field(SIOL, "$(P)SIM:COMP:SP")
-    field(SDIS, "$(P)DISABLE")
-    
-    field(FLNK, "$(P)TIME:RUN:_TOG")
-}
-
-alias("$(P)TIME:CALC:SP", "$(P)SIM:TIME:CALC:SP")
-
-alias("$(P)TIME:CALC:SP", "$(P)TIME:CALC:SP:RBV")
-
-alias("$(P)TIME:CALC:SP", "$(P)TIME:CALC")
-
-
-record(calcout, "$(P)TIME:RUN:_TOG")
-{
-    field(DESC, "Toggle time control")
-    field(INPA, "$(P)TIME:CALC:SP")
-    field(CALC, "A")
-    field(OUT, "$(P)TIME:RUN:SP.DISP PP")
-    
-    field(FLNK, "$(P)TIME:VOL:_TOG")
-}
-
-record(calcout, "$(P)TIME:VOL:_TOG")
-{
-    field(DESC, "Toggle volume control")
-    field(INPA, "$(P)TIME:CALC:SP")
-    field(CALC, "A ? 0 : 1")
-    field(OUT, "$(P)TIME:VOL:SP.DISP PP")
-}
-
 record(ao, "$(P)TIME:RUN:SP")
 {
     field(DESC, "Pump runtime in seconds")
@@ -500,7 +459,7 @@ record(calc, "$(P)VOL:REMAINING")
     field(ASG, "READONLY")
 }
 
-record(calcout, "$(P)TIME:VOL:CALCRUN")
+record(calc, "$(P)TIME:VOL:CALCRUN")
 {
     field(DESC, "Calculate runtime for volume")
     field(DTYP, "Soft Channel")
@@ -513,7 +472,7 @@ record(calcout, "$(P)TIME:VOL:CALCRUN")
     field(ASG, "READONLY")
 }
 
-record(calcout, "$(P)TIME:RUN:CALCVOL")
+record(calc, "$(P)TIME:RUN:CALCVOL")
 {
     field(DESC, "Calculate vol (mL) for runtime")
     field(INPA, "$(P)TIME:RUN:SP")
