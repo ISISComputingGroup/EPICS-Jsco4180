@@ -74,7 +74,7 @@ ss detect_jasco_error_state
                         PVPUT(pump_reset, 1);
                         errlogSevPrintf(errlogMinor, "Restarting run");
                         PVPUT(pump_run, 1);
-                    } else if (status != 1) {
+                    } else {
                         errlogSevPrintf(errlogMinor, "Resetting pump");
                         PVPUT(pump_reset, 1);
                         errlogSevPrintf(errlogMinor, "Restarting run");
