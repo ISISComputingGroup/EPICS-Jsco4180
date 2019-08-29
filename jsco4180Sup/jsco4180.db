@@ -31,7 +31,7 @@ record(bo, "$(P)DISABLE")
 #################################
 #
 # The flowrate of the device can be change at any point using the FLOWRATE:SP
-# command (even while the device is pumping). Refer to Sec.6 "File" for details.
+# command (even while the device is pumping). Refer to Sec.5 "File" for details.
 #
 #
 record(ai, "$(P)FLOWRATE") 
@@ -175,7 +175,7 @@ record(ao, "$(P)PRESSURE:MIN:SP")
 alias("$(P)PRESSURE:MIN", "$(P)PRESSURE:MIN:SP:RBV")
 
 #################################
-# 7. PUMP CONTROL
+# 4. PUMP CONTROL
 #################################
 #
 # The device has the ability to run files (programs) or continuously pump.
@@ -264,6 +264,7 @@ record(bo, "$(P)START:SP")
     
     info(INTEREST, "HIGH")
 }
+alias("$(P)START:SP", "$(P)START")
 
 record(bo, "$(P)STOP:SP")
 {
@@ -277,6 +278,7 @@ record(bo, "$(P)STOP:SP")
     
     info(INTEREST, "HIGH")
 }
+alias("$(P)STOP:SP", "$(P)STOP")
 
 record(bo, "$(P)PUMP_FOR_TIME:SP") 
 {
@@ -294,7 +296,7 @@ record(bo, "$(P)PUMP_FOR_TIME:SP")
     
     info(INTEREST, "HIGH")
 }
-alias("$(P)TIMED:SP", "$(P)TIMED")
+alias("$(P)PUMP_FOR_TIME:SP", "$(P)PUMP_FOR_TIME")
 
 record(bo, "$(P)PUMP_SET_VOLUME:SP") 
 {
@@ -312,6 +314,7 @@ record(bo, "$(P)PUMP_SET_VOLUME:SP")
     
     info(INTEREST, "HIGH")
 }
+alias("$(P)PUMP_SET_VOLUME:SP", "$(P)PUMP_SET_VOLUME")
 
 record(ao, "$(P)RESET:SP")
 {
@@ -326,7 +329,7 @@ record(ao, "$(P)RESET:SP")
 alias("$(P)RESET:SP", "$(P)RESET")
 
 #################################
-# 8. FILE CONTROL
+# 5. FILE CONTROL
 #################################
 #
 # Set the currently selected program or open/close files.
@@ -354,7 +357,7 @@ record(ao, "$(P)FILE:SP")
 }
 
 #################################
-# 8. PROGRAM RUN-TIME
+# 6. PROGRAM RUN-TIME
 #################################
 #
 # The device will return the current program runtime (TIME) which is used to
@@ -523,12 +526,12 @@ record(calcout, "$(P)TIME:RUN:CALCVOL")
 }
 
 #################################
-# 9. COMPOSITION GRADIENTS
+# 7. COMPOSITION GRADIENTS
 #################################
 #
 # The components A, B, and, C can be change only during a program execution.
 # The COMP:SP relates to a ramped change in compositions that is used only 
-# in a saved program. Refer to Sec.6 "File" for details.
+# in a saved program. Refer to Sec.5 "File" for details.
 #
 # NB: Component D is auto-calculated by the device.
 #
@@ -560,7 +563,7 @@ record(ao, "$(P)COMP:A:SP")
     field(EGU, "%")
     field(FLNK, "$(P)COMP:D:SP")
     info(autosaveFields, "VAL")
-    info(INTEREST, "HIGH")
+    info(archive, "VAL")
 }
 alias("$(P)COMP:A:SP", "$(P)COMP:A:SP:RBV")
 
@@ -590,7 +593,7 @@ record(ao, "$(P)COMP:B:SP")
     field(EGU, "%")
     field(FLNK, "$(P)COMP:D:SP")
     info(autosaveFields, "VAL")
-    info(INTEREST, "HIGH")
+    info(archive, "VAL")
 }
 alias("$(P)COMP:B:SP", "$(P)COMP:B:SP:RBV")
 
@@ -620,7 +623,7 @@ record(ao, "$(P)COMP:C:SP")
     field(EGU, "%")
     field(FLNK, "$(P)COMP:D:SP")
     info(autosaveFields, "VAL")
-    info(INTEREST, "HIGH")
+    info(archive, "VAL")
 }
 alias("$(P)COMP:C:SP", "$(P)COMP:C:SP:RBV")
 
@@ -646,15 +649,16 @@ record(calc, "$(P)COMP:D:SP")
     field(HIHI, "101")
     field(LOLO, "-1")
     
-    field(INPA, "$(P)COMP:A:SP")
-    field(INPB, "$(P)COMP:B:SP")
-    field(INPC, "$(P)COMP:C:SP")
+    field(INPA, "$(P)COMP:A:SP:RBV")
+    field(INPB, "$(P)COMP:B:SP:RBV")
+    field(INPC, "$(P)COMP:C:SP:RBV")
 
     field(CALC, "100-(A+B+C)")
 
     field(EGU, "%")
-    info(autosaveFields, "VAL")
     info(INTEREST, "HIGH")
+    info(autosaveFields, "VAL")
+    info(archive, "VAL")
 }
 alias("$(P)COMP:D:SP", "$(P)COMP:D:SP:RBV")
 
@@ -670,7 +674,7 @@ record(ao, "$(P)COMP:TIME:SP")
 alias("$(P)COMP:TIME:SP", "$(P)COMP:TIME")
 
 #################################
-# 10. ERROR INFORMATION
+# 8. ERROR INFORMATION
 #################################
 #
 # When the pump experiences a problem during operation, it will automatically
@@ -778,17 +782,21 @@ record(bi, "$(P)ERROR:COMP")
 record(ai, "$(P)ERROR:DELAY")
 {
     field(DESC, "Delay before trying to reset components")
-    field(VAL, "1")
+    field(VAL, "10")
+    
+    field(PINI, "YES")
 }
 
 record(ai, "$(P)ERROR:TOL")
 {
     field(DESC, "Tolerance between comp SP and RBV")
-    field(VAL, "0")
+    field(VAL, "0.1")
+    
+    field(PINI, "YES")
 }
 
 #################################
-# 11. SIMULATION RECORDS
+# 9. SIMULATION RECORDS
 #################################
 #
 record(mbbo, "$(P)SIM:_PUMP")
