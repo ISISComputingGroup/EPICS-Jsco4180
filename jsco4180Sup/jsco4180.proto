@@ -1,129 +1,167 @@
-InTerminator = CR;
-OutTerminator = CR LF;
+InTerminator = CR LF;
+OutTerminator = CR;
+
+input_delay = 120; # millisecond wait time between sequenced inputs
+
+readErrorStr {
+    in "\%\%%[^%]\%\%";
+    wait $input_delay;
+}
+
+getStatus {
+    out "status load p";
+    in "%d";
+    wait $input_delay;
+}
+
+setFileNumber {
+    out "%d fileno set";
+    wait $input_delay;
+}
+
+setFileState {
+    out "%{closefile|openfile}";
+    wait $input_delay;
+}
 
 setFlowrate {
     out "%.3f flowrate set";
+    wait $input_delay;
 }
 
-_setFlowrate {
-    out "%(\$1\$2).1f %(\$1\$2).3f flowrate set";
+getFlowrateRBV {
+    out "flowrate load p";
+    in "%f";
+    wait $input_delay;
 }
 
 getFlowrate {
     out "a_flow load p";
     in "%f";
+    wait $input_delay;
 }
 
 getPressure {
     out "a_press1 load p";
     in "%d";
+    wait $input_delay;
 }
 
 setPressureMax {
     out "%d pmax set";
-}
-
-_setPressureMax {
-    out "%(\$1\$2).1f %(\$1\$3)d pmax set";
+    wait $input_delay;
 }
 
 getPressureMax {
     out "a_pmax load p";
     in "%d";
+    wait $input_delay;
 }
 
 setPressureMin {
     out "%d pmin set";
-}
-
-_setPressureMin {
-    out "%(\$1\$2).1f %(\$1\$3)d pmin set";
+    wait $input_delay;
 }
 
 getPressureMin {
     out "a_pmin load p";
     in "%d";
-}
-
-setPumpOffTimer {
-    out "%(\$1).1f offtimer set";
-}
-
-setPumpOnTimer {
-    out "%.1f ontimer set";
-}
-
-setValvePosition {
-    out "%d valve set";
-}
-
-_setValvePosition {
-    out "%(\$1\$2).1f %(\$1\$3)d valve set";
-}
-
-getValvePosition {
-    out "valve load p";
-    in "%d";
-}
-
-setFileNumber {
-    out "%d fileno set";
-}
-
-setFileOpen {
-    out "%(\$1)d openfile";
-}
-
-readErrorString {
-    in "\%\%%[^%]\%\%";
-}
-
-setFileClose {
-    out "closefile";
+    wait $input_delay;
 }
 
 setPump {
     out "%d pump set";
+    wait $input_delay;
 }
 
 getTime {
     out "current_time load p";
     in "%d";
+    wait $input_delay;
 }
 
 getCompA {
     out "compa load p";
     in "%f";
+    wait $input_delay;
 }
 
 getCompB {
     out "compb load p";
     in "%f";
+    wait $input_delay;
 }
 
 getCompC {
     out "compc load p";
     in "%f";
+    wait $input_delay;
 }
 
 getCompD {
     out "compd load p";
     in "%f";
+    wait $input_delay;
 }
 
-setComp {
-    out "%(\$1\$2).1f %(\$1\$3).1f %(\$1\$4).1f comp set";
-}
-
-_setComp {
+executeProgram {
+    out "1 pump set";
+    wait $input_delay;
+    out "0 fileno set";
+    wait $input_delay;
+    out "0 openfile";
+    wait $input_delay;
     out "%(\$1\$2).1f %(\$1\$3).1f %(\$1\$4).1f %(\$1\$5).1f comp set";
+    wait $input_delay;
+    out "0 closefile";
+    wait $input_delay;
+    out "\$6 pump set";
+    wait $input_delay;
+}
+
+testCrash {
+    out "0 fileno set";
+    wait $input_delay;
+    out "0 openfile";
+    wait $input_delay;
+    out "5.0 flowrate set";
+    # no delay to simulate crash condition
+    out "0.0 25 25 25 comp set";
+    wait $input_delay;
+    out "0 closefile";
+    wait $input_delay;
 }
 
 getError {
     out "trouble load p";
     in "%d";
+    wait $input_delay;
 }
 
 setError {
     out "0 trouble set";
+    wait $input_delay;
+}
+
+# Attempt to re-write a new default settings program file and load it to reset the single
+# channel mode state. This state is caused by an incorrectly written program file.
+reset {
+    out "1 pump set";
+    wait $input_delay;
+    out "closefile";
+    wait $input_delay;
+    out "0 fileno set";
+    wait $input_delay;
+    out "0 openfile";
+    wait $input_delay;
+    out "0.0 flowrate set";
+    wait $input_delay;
+    out "0.0 100 0 0 comp set";
+    wait $input_delay;
+    out "0 closefile";
+    wait $input_delay;
+    out "8 pump set";
+    wait $input_delay;
+    out "1 pump set";
+    wait $input_delay;
 }
