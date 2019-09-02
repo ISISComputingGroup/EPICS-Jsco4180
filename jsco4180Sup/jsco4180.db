@@ -325,6 +325,8 @@ record(ao, "$(P)RESET:SP")
     
     info(INTEREST, "HIGH")
     field(SDIS, "$(P)DISABLE")
+    
+    field(EGU, "")
 }
 alias("$(P)RESET:SP", "$(P)RESET")
 
@@ -885,12 +887,6 @@ record(ai, "$(P)SIM:PRESSURE:MIN")
 alias("$(P)SIM:PRESSURE:MIN","$(P)SIM:PRESSURE:MIN:SP")
 
 alias("$(P)SIM:PRESSURE:MIN","$(P)SIM:PRESSURE:MIN:SP:RBV")
-
-record(stringin, "$(P)SIM:ERROR:STR")
-{
-    field(SCAN, "Passive")
-    field(DTYP, "Soft Channel")
-}
 
 record(mbbi, "$(P)SIM:ERROR:COMP")
 {
