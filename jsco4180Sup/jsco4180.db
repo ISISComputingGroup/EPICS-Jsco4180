@@ -382,9 +382,9 @@ record(ai, "$(P)TIME")
     field(SDIS, "$(P)DISABLE")
 }
 
-# This record is used to determine how long the pump should run for, this record is updated
-# when a user sets either a desired runtime set point (TIME:RUN:SP) or a desired volume pump
-# (TIME:VOL:SP). 
+# This record is updated when a user sets either a desired runtime set point (TIME:RUN:SP) or a 
+# desired volume pump (TIME:VOL:SP) and represents the target runtime we use to calculate how
+# much time is remaining and when to stop the pump program.
 record(ai, "$(P)TIME:TARGET_RUNTIME")
 {
     field(DESC, "The target runtime for the pump")
