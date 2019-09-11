@@ -289,6 +289,7 @@ record(bo, "$(P)PUMP_FOR_TIME:SP")
     field(ONAM, "Start")
     
     field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP,8) $(PORT)")
+    field(FLNK, "$(P)TIME:RUN:SP")
     
     field(SIML, "$(P)SIM")
     field(SIOL, "$(P)SIM:TIMED:SP")
@@ -307,11 +308,10 @@ record(bo, "$(P)PUMP_SET_VOLUME:SP")
     field(ONAM, "Start")
     
     field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP,8) $(PORT)")
+    field(FLNK, "$(P)TIME:VOL:SP")
     
     field(SIML, "$(P)SIM")
-
     field(SDIS, "$(P)DISABLE")
-    
     info(INTEREST, "HIGH")
 }
 alias("$(P)PUMP_SET_VOLUME:SP", "$(P)PUMP_SET_VOLUME")
@@ -366,12 +366,6 @@ record(ao, "$(P)FILE:SP")
 # determine if the runtime for the users desired runtime (TIME:RUN:SP) 
 # duration or set volume (TIME:VOL:SP) has been reached.
 #
-# Changing a time or volume set points will automatically update the opposite
-# record as a helpful reference. i.e., I want to pump 10mL and set this and
-# the runtime set point will update based on the current flowrate to know how
-# long the run will take in advance. In the event the flowrate is changed,
-# the volume is kept constant and the runtime is updated.
-#
 record(ai, "$(P)TIME")
 {
     field(DESC, "Elapsed program runtime")
@@ -388,12 +382,23 @@ record(ai, "$(P)TIME")
     field(SDIS, "$(P)DISABLE")
 }
 
+# This record is used to determine how long the pump should run for, this record is updated
+# when a user sets either a desired runtime set point (TIME:RUN:SP) or a desired volume pump
+# (TIME:VOL:SP). 
+record(ai, "$(P)TIME:TARGET_RUNTIME")
+{
+    field(DESC, "The target runtime for the pump")
+    field(EGU, "s")
+    info(INTEREST, "MEDIUM")
+}
+
 record(ao, "$(P)TIME:RUN:SP")
 {
     field(DESC, "Pump runtime in seconds")
     field(DTYP, "Soft Channel")
     field(DRVL, "1")
     field(DRVH, "1000000")
+    field(OUT, "$(P)TIME:TARGET_RUNTIME PP")
     
     field(EGU, "s")
     field(FLNK, "$(P)TIME:RUN:CALCVOL")
@@ -421,7 +426,7 @@ record(calcout, "$(P)TIME:RUN:CHECK")
     field(DESC, "Stop pump if we have reached runtime")
     field(DTYP, "Soft Channel")
     field(INPA, "$(P)TIME")
-    field(INPB, "$(P)TIME:RUN:SP")
+    field(INPB, "$(P)TIME:TARGET_RUNTIME")
     field(INPC, "$(P)STATUS")
     
     field(CALC, "(A>=B)&&(C#0||1)?1:0")
@@ -436,7 +441,7 @@ record(calc, "$(P)TIME:REMAINING")
 {
     field(DESC, "Remaining pump time")
     field(INPA, "$(P)TIME")
-    field(INPB, "$(P)TIME:RUN:SP")
+    field(INPB, "$(P)TIME:TARGET_RUNTIME")
     field(INPC, "$(P)STATUS")
     
     field(CALC, "C=0?0:(B-A)")
@@ -451,22 +456,21 @@ record(calc, "$(P)VOL:REMAINING")
     field(DESC, "Remaining volume")
     field(INPA, "$(P)TIME:REMAINING")
     field(INPB, "$(P)FLOWRATE")
-    field(INPC, "$(P)TIME:VOL:SP")
-    field(INPD, "$(P)STATUS")
+    field(INPC, "$(P)STATUS")
     
-    field(CALC, "D=0?0:((A*B)/60)")
+    field(CALC, "C=0?0:((A*B)/60)")
     field(EGU, "mL")
     field(PREC, "3")
     info(INTEREST, "HIGH")
     field(ASG, "READONLY")
 }
 
-record(calc, "$(P)TIME:VOL:CALCRUN")
+record(calcout, "$(P)TIME:VOL:CALCRUN")
 {
     field(DESC, "Calculate runtime for volume")
-    field(DTYP, "Soft Channel")
     field(INPA, "$(P)TIME:VOL:SP")
     field(INPB, "$(P)FLOWRATE:SP CP")
+    field(OUT,  "$(P)TIME:TARGET_RUNTIME PP")
     
     field(CALC, "(A/B)*60")
     
