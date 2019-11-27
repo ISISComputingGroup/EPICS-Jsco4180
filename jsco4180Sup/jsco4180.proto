@@ -27,6 +27,11 @@ setFileState {
 setFlowrate {
     out "%.3f flowrate set";
     wait $input_delay;
+    # read back setpoint value and update setpoint readback PV
+    wait 200; # allow h/w to update registers
+    out "flowrate load p";
+    in "%(\$1FLOWRATE:SP:RBV)f";
+    wait $input_delay;
 }
 
 getFlowrateRBV {

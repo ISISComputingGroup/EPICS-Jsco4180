@@ -60,7 +60,7 @@ record(ao, "$(P)FLOWRATE:SP")
     field(DRVL, "0.000")
     field(VAL, "0.010")
     
-    field(OUT, "@jsco4180.proto setFlowrate $(PORT)")
+    field(OUT, "@jsco4180.proto setFlowrate($(P)) $(PORT)")
     
     field(PREC, "3")
     field(EGU, "mL/min")
@@ -469,7 +469,7 @@ record(calcout, "$(P)TIME:VOL:CALCRUN")
 {
     field(DESC, "Calculate runtime for volume")
     field(INPA, "$(P)TIME:VOL:SP")
-    field(INPB, "$(P)FLOWRATE:SP CP")
+    field(INPB, "$(P)FLOWRATE:SP:RBV CP")
     field(OUT,  "$(P)TIME:TARGET_RUNTIME PP")
     
     field(CALC, "(A/B)*60")
@@ -481,7 +481,7 @@ record(calc, "$(P)TIME:RUN:CALCVOL")
 {
     field(DESC, "Calculate vol (mL) for runtime")
     field(INPA, "$(P)TIME:RUN:SP")
-    field(INPB, "$(P)FLOWRATE:SP CP")
+    field(INPB, "$(P)FLOWRATE:SP:RBV CP")
     
     field(CALC, "(A*B)/60")
     
