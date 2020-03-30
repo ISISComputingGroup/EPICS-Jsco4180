@@ -7,6 +7,7 @@ program detect_jasco_error_state("SETPOINT,READBACK,STATUS,PUMPRUN,TIMERUN,PUMPS
 
 #include "seqPVmacros.h"
 %% #include "errlog.h"
+%% #include "math.h"
 
 /* Turn on run-time debug messages */
 option +d;
