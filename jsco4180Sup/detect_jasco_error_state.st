@@ -60,6 +60,12 @@ ss detect_jasco_error_state
             setpoint_old = setpoint;
             errlogSevPrintf(errlogMinor, "detect_jasco_error_state: setpoint ('%s') not equal readback ('%s'). Resetting and reprocessing pump run in %f seconds if still not the same.\n", setpoint_description, readback_description, delay_time);
         } state checksp
+        when(notWithinTolerance(setpoint, readback, tolerance) == FALSE && setpoint_alarm == 0 && status != 0 && retries != 0) 
+        {
+            errlogSevPrintf(errlogMinor, "detect_jasco_error_state: setpoint ('%s') equals readback ('%s'). Current retries ('%i') reset to 0.\n", setpoint_description, readback_description, retries);
+            retries = 0;
+            PVPUT(pump_error, 0);
+        } state wait
     }
 
     state checksp
@@ -95,13 +101,6 @@ ss detect_jasco_error_state
                     }
                 }
             }
-        } state wait
-
-        when(notWithinTolerance(setpoint, readback, tolerance) == FALSE && setpoint_alarm == 0 && status != 0 && retries != 0) 
-        {
-            errlogSevPrintf(errlogMinor, "detect_jasco_error_state: setpoint ('%s') equals readback ('%s'). Current retries ('%i') reset to 0.\n", setpoint_description, readback_description, retries);
-            retries = 0;
-            PVPUT(pump_error, 0);
         } state wait
     }
 
