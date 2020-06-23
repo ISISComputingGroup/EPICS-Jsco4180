@@ -86,17 +86,14 @@ ss detect_jasco_error_state
                     retries = 0;
                 } else {
                     retries += 1;
+                    errlogSevPrintf(errlogMinor, "Resetting pump");
+                    PVPUT(pump_reset, 1);
+                    epicsThreadSleep(1.0); /* for jasco expert: is using SYNC on above better? */
                     if (status == 1) {
-                        errlogSevPrintf(errlogMinor, "Resetting pump");
-                        PVPUT(pump_reset, 1);
-                        epicsThreadSleep(1.0); /* or use SYNC on above? */
                         errlogSevPrintf(errlogMinor, "Restarting run");
                         PVPUT(pump_run, 1);
                     } else {
-                        errlogSevPrintf(errlogMinor, "Resetting pump");
-                        PVPUT(pump_reset, 1);
-                        epicsThreadSleep(1.0); /* or use SYNC on above? */
-                        errlogSevPrintf(errlogMinor, "Restarting run");
+                        errlogSevPrintf(errlogMinor, "Restarting run (timed)");
                         PVPUT(pump_timed, 1);
                     }
                 }
