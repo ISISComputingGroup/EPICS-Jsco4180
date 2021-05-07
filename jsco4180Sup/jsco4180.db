@@ -617,7 +617,7 @@ record(calc, "$(P)COMP:D:SP")
     field(INPC, "$(P)COMP:C:SP:RBV")
 
     field(CALC, "100-(A+B+C)")
-
+    field(ASG, "READONLY")
     field(EGU, "%")
     info(INTEREST, "HIGH")
     info(autosaveFields, "VAL")
