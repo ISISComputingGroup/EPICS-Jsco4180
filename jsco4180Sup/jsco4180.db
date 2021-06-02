@@ -474,6 +474,9 @@ record(calcout, "$(P)TIME:VOL:CALCRUN")
     
     field(CALC, "(A/B)*60")
     
+    field(EGU, "s")
+    field(PREC, "3")	
+	
     field(ASG, "READONLY")
 }
 
@@ -485,6 +488,9 @@ record(calc, "$(P)TIME:RUN:CALCVOL")
     
     field(CALC, "(A*B)/60")
     
+	field(EGU, "mL")
+    field(PREC, "3")
+	
     field(ASG, "READONLY")
 }
 
