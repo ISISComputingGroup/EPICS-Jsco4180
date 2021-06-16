@@ -474,6 +474,9 @@ record(calcout, "$(P)TIME:VOL:CALCRUN")
     
     field(CALC, "(A/B)*60")
     
+    field(EGU, "s")
+    field(PREC, "3")	
+	
     field(ASG, "READONLY")
 }
 
@@ -485,6 +488,9 @@ record(calc, "$(P)TIME:RUN:CALCVOL")
     
     field(CALC, "(A*B)/60")
     
+	field(EGU, "mL")
+    field(PREC, "3")
+	
     field(ASG, "READONLY")
 }
 
@@ -619,22 +625,26 @@ record(calc, "$(P)COMP:D:SP")
     field(CALC, "100-(A+B+C)")
     field(ASG, "READONLY")
     field(EGU, "%")
+	field(FLNK, "$(P)COMP:ALLOWED")
     info(INTEREST, "HIGH")
     info(autosaveFields, "VAL")
     info(archive, "VAL")
 }
 alias("$(P)COMP:D:SP", "$(P)COMP:D:SP:RBV")
 
-record(ao, "$(P)COMP:TIME:SP") 
+record(calcout, "$(P)COMP:ALLOWED")
 {
-    field(DESC, "Composition ramp time")
-    field(DTYP, "Soft Channel")
-    field(DRVH, "999.9")
-    field(DRVL, "0.0")
-    
-    field(EGU, "min")
+    field(INPA, "$(P)COMP:D:SP")
+	field(CALC, "A<0")
+	field(OUT, "$(P)DISABLE_PUMP PP")
 }
-alias("$(P)COMP:TIME:SP", "$(P)COMP:TIME")
+
+record(dfanout, "$(P)DISABLE_PUMP")
+{
+	field(OUTA, "$(P)START:SP.DISP")
+	field(OUTB, "$(P)PUMP_FOR_TIME:SP.DISP")
+	field(OUTC, "$(P)PUMP_SET_VOLUME:SP.DISP")
+}
 
 #################################
 # 8. ERROR INFORMATION
