@@ -116,11 +116,11 @@ executeProgram {
     wait $input_delay;
     out "0 openfile";
     wait $input_delay;
-    out "%(\$1\$2).1f %(\$1\$3).1f %(\$1\$4).1f %(\$1\$5).1f comp set";
+    out "0.0 %(\$1\$2).1f %(\$1\$3).1f %(\$1\$4).1f comp set";
     wait $input_delay;
     out "0 closefile";
     wait $input_delay;
-    out "\$6 pump set";
+    out "\$5 pump set";
     wait $input_delay;
 }
 

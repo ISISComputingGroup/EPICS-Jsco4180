@@ -260,7 +260,7 @@ record(bo, "$(P)START:SP")
     field(ZNAM, "")
     field(ONAM, "Start")
     
-    field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP,6) $(PORT)")
+    field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,A:SP,B:SP,C:SP,6) $(PORT)")
     
     info(INTEREST, "HIGH")
 }
@@ -274,7 +274,7 @@ record(bo, "$(P)STOP:SP")
     field(ZNAM, "")
     field(ONAM, "Stop")
     
-    field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP,1) $(PORT)")
+    field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,A:SP,B:SP,C:SP,1) $(PORT)")
     
     info(INTEREST, "HIGH")
 }
@@ -288,7 +288,7 @@ record(bo, "$(P)PUMP_FOR_TIME:SP")
     field(ZNAM, "")
     field(ONAM, "Start")
     
-    field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP,8) $(PORT)")
+    field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,A:SP,B:SP,C:SP,8) $(PORT)")
     field(FLNK, "$(P)TIME:RUN:SP")
     
     field(SIML, "$(P)SIM")
@@ -307,7 +307,7 @@ record(bo, "$(P)PUMP_SET_VOLUME:SP")
     field(ZNAM, "")
     field(ONAM, "Start")
     
-    field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,TIME:SP,A:SP,B:SP,C:SP,8) $(PORT)")
+    field(OUT, "@jsco4180.proto executeProgram($(P)COMP:,A:SP,B:SP,C:SP,8) $(PORT)")
     field(FLNK, "$(P)TIME:VOL:SP")
     
     field(SIML, "$(P)SIM")
