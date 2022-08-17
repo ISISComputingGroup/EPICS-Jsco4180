@@ -5,7 +5,7 @@ program detect_jasco_error_state("SETPOINT,READBACK,STATUS,PUMPRUN,TIMERUN,PUMPS
    components have not updated after a number of retries then the pump will be stopped and an error record will be 
    updated to warn the user. */
 
-#include "seqPVmacros.h"
+#include "ibexSeqPVmacros.h"
 %% #include "errlog.h"
 %% #include "math.h"
 
