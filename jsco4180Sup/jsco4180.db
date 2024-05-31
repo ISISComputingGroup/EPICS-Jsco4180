@@ -68,13 +68,20 @@ record(ao, "$(P)FLOWRATE:SP")
     field(SIML, "$(P)SIM")
     field(SIOL, "$(P)SIM:FLOWRATE:SP")
     field(SDIS, "$(P)DISABLE")
+	field(FLNK, "$(P)FLOWRATE:SP:RBV")
 }
 
+record(fanout, "$(P)SCAN")
+{
+    field(SCAN, "1 second")
+	field(LNK0, "$(P)FLOWRATE:SP:RBV")
+}
+ 
 record(ai, "$(P)FLOWRATE:SP:RBV") 
 {
     field(DESC, "Pump flowrate in mL/min")
     field(DTYP, "stream")
-    field(SCAN, "1 second")
+    field(SCAN, "Passive")
     
     field(INP, "@jsco4180.proto getFlowrateRBV $(PORT)")
     
