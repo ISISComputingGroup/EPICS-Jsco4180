@@ -194,6 +194,19 @@ alias("$(P)PRESSURE:MIN", "$(P)PRESSURE:MIN:SP:RBV")
 # The ability to create user programs and run them using _PUMP:SP is still 
 # available.
 #
+record(calcout, "$(P)PROCESSING") {
+    field(DESC, "Pump control processing state")
+    field(SCAN, ".1 second")
+    field(INPA, "$(P)START:SP.PACT")
+    field(INPB, "$(P)STOP:SP.PACT")
+    field(INPC, "$(P)PUMP_FOR_TIME:SP.PACT")
+    field(INPD, "$(P)PUMP_SET_VOLUME:SP.PACT")
+    field(INPE, "$(P)RESET:SP.PACT")
+    field(CALC, "A||B||C||D||E")  # If ANY are active, output 1. Otherwise, 0
+    field(OOPT, "On Change")
+    field(OUT, "$(P)STATUS.PROC")
+}
+
 record (mbbi, "$(P)STATUS")
 {
     field(DESC, "Pump status")
